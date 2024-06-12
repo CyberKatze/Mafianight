@@ -4,7 +4,7 @@ import './index.css'
 import Root from "./routes/root";
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import ErrorPage from './error-page.tsx';
-import Developer from './routes/develoeprs.tsx';
+import About from './routes/about.tsx';
 import Loginform from './components/Loginform.tsx';
 import Roles from './routes/roles.tsx';
 
