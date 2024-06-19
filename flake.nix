@@ -15,7 +15,7 @@
         default = pkgs.mkShell {
           packages = with pkgs; [
             haskell.compiler.ghc92
-            (haskell-language-server.override { supportedGhcVersions = [ "92" ]; })
+            # (haskell-language-server.override { supportedGhcVersions = [ "92" ]; })
             haskellPackages.yesod-bin
             haskellPackages.stack
             haskellPackages.zlib
