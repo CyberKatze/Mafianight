@@ -29,7 +29,7 @@ type FormData = LoginFormData | SignupFormData;
 
 const Loginform = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const formOptions = isSignUp ? { resolver: zodResolver(signupSchema) } : { resolver: zodResolver(loginSchema) };
+  const formOptions = isSignUp ? { resolver: zodResolver(loginSchema) } : { resolver: zodResolver(signupSchema) };
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>(formOptions);
 
@@ -39,13 +39,13 @@ const Loginform = () => {
   };
 
   return (
-    <section className="bg-gray-900">
+    <section >
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
         <a href="#" className="flex items-center mb-6 text-2xl font-semibold  text-white">
           <img className="w-8 h-8 mr-2 bg-black rounded-full" src={hat} alt="logo" />
           Mafia
         </a>
-        <div className="w-full  rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-gray-800 border-gray-700">
+        <div className="w-full  rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0 bg-onyx border-onyx">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight  md:text-2xl text-white">
               {isSignUp ? 'Create an account' : 'Sign in to your account'}
@@ -57,7 +57,7 @@ const Loginform = () => {
                   type="email"
                   id="email"
                   {...register('email')}
-                  className={` border sm:text-sm rounded-lg  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 ${errors.email ? 'border-red-500' : ''}`}
+                  className={` border sm:text-sm rounded-lg  block w-full p-2.5 bg-slate border-slate placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 ${errors.email ? 'border-red-500' : ''}`}
                   placeholder="name@.com"
                   required
                 />
@@ -69,7 +69,7 @@ const Loginform = () => {
                   type="password"
                   id="password"
                   {...register('password')}
-                  className={` border  sm:text-sm rounded-lg  block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 ${errors.password ? 'border-red-500' : ''}`}
+                  className={` border  sm:text-sm rounded-lg  block w-full p-2.5 bg-slate border-slate placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 ${errors.password ? 'border-red-500' : ''}`}
                   placeholder="••••••••"
                   required
                 />
@@ -82,14 +82,14 @@ const Loginform = () => {
                     type="password"
                     id="confirmPassword"
                     {...register('confirmPassword')}
-                    className={` border  sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-gray-700 border-gray-600 placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 ${errors.confirmPassword ? 'border-red-500' : ''}`}
+                    className={` border  sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 bg-slate border-slate placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 ${errors.confirmPassword ? 'border-red-500' : ''}`}
                     placeholder="••••••••"
                     required
                   />
                   {errors.confirmPassword && <p className="text-red text-sm mt-1">{errors.confirmPassword.message}</p>}
                 </div>
               )}
-              <button  type="submit" className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">{isSignUp ?  'Sign up' : 'Sign in'}</button>
+              <button  type="submit" className="w-full text-white bg-violet hover:bg-lavendor focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:focus:ring-primary-800">{isSignUp ?  'Sign up' : 'Sign in'}</button>
               <p className="text-sm font-light text-gray-400">
               {isSignUp ? 'Already have an account?' : "Don’t have an account yet?"} <a onClick={() => setIsSignUp(!isSignUp)} href="#" className="font-medium  hover:underline text-primary-500">{isSignUp ? 'Sign in' : 'Sign up'}</a>
               </p>
