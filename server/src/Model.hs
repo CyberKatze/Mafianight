@@ -16,6 +16,9 @@ module Model where
 import ClassyPrelude.Yesod
 import Database.Persist.Quasi
 
+import Models.Turn
+import Models.Event
+
 -- You can define all of your database entities in the entities file.
 -- You can find more information on persistent and how to declare entities
 -- at:

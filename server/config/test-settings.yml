@@ -6,6 +6,6 @@ database:
   # something like:
   #
   #   database: "_env:SQLITE_DATABASE:haskell-web_test.sqlite3"
-  database: haskell-web_test.sqlite3
+  database: mafia-db
 
 auth-dummy-login: true

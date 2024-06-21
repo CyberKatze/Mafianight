@@ -15,7 +15,7 @@ import Settings
 import ClassyPrelude.Yesod
 
 import Data.Kind            (Type)
-import Database.Persist.Sql (ConnectionPool, runSqlPool)
+import Database.Persist.Sql (runSqlPool)
 import Control.Monad.Logger (LogSource)
 import qualified Yesod.Core.Unsafe as Unsafe
 

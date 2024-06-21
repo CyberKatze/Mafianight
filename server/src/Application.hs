@@ -53,6 +53,11 @@ import Foundation
 -- Import all relevant handler modules here.
 -- Don't forget to add new modules to your cabal file!
 import Handler.Role
+import Handler.User
+import Handler.Turn
+import Handler.Event
+import Handler.Game
+import Handler.Player
 
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application

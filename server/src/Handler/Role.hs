@@ -24,3 +24,12 @@ getRoleR = do
     let rolesJson = Aeson.toJSON roles
   -- Return roles as JSON response
     returnJson rolesJson
+
+getRoleNameR :: Text -> Handler Value
+getRoleNameR _name = do
+  -- Fetch roles from the database
+    roles <- runDB $ selectList [] [Desc RoleId]
+  -- Convert roles to JSON
+    let rolesJson = Aeson.toJSON roles
+  -- Return roles as JSON response
+    returnJson rolesJson

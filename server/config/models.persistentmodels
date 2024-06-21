@@ -1,26 +1,52 @@
 -- By default this file is used by `persistFileWith` in Model.hs (which is imported by Foundation.hs)
 -- Syntax for this file here: https://github.com/yesodweb/persistent/blob/master/docs/Persistent-entity-syntax.md
 
-User
-    ident Text
-    password Text Maybe
-    UniqueUser ident
-    deriving Typeable
-Email
-    email Text
-    userId UserId Maybe
-    verkey Text Maybe
-    UniqueEmail email
-Comment json -- Adding "json" causes ToJSON and FromJSON instances to be derived.
-    message Text
-    userId UserId Maybe
-    deriving Eq
-    deriving Show
+User json
+  ident Text
+  password Text Maybe
+  UniqueUser ident
+  deriving Typeable
+
+Email json -- Adding "json" causes ToJSON and FromJSON instances to be derived.
+  email Text
+  userId UserId Maybe
+  verkey Text Maybe
+  UniqueEmail email
+  deriving Show
+
 Role json
-    name Text
-    avatar  Text Maybe
-    mafia Bool
-    desc Text Maybe
-    UniqueRole name
-    deriving Eq
-    deriving Show
+  name Text
+  avatar  Text Maybe
+  mafia Bool
+  desc Text Maybe
+  UniqueRole name
+  deriving Eq
+  deriving Show
+
+Game json
+  currentTurn TurnId  Maybe
+  name Text
+  deriving Eq
+  deriving Show
+
+Player json
+  name Text
+  alive Bool
+  gameId GameId
+  roleId RoleId
+  deriving Eq
+  deriving Show
+
+Turn json
+  phase Phase
+  order Int
+  gameId GameId
+  deriving Eq
+  deriving Show
+
+Event json
+  eventType EventType
+  turnId TurnId
+  gameId GameId
+  subject PlayerId
+  object PlayerId

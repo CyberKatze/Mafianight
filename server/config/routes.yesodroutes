@@ -2,3 +2,13 @@
 -- Syntax for this file here: https://www.yesodweb.com/book/routing-and-handlers
 
 /roles RoleR GET POST
+
+/events EventR GET POST
+
+/players PlayerR GET POST
+
+/games GameR GET POST
+
+/turns TurnR GET POST
+
+/users UserR GET POST
