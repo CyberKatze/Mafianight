@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+
 interface Props {
   onStart: (
     numberOfPlayers: number, 
@@ -15,23 +16,27 @@ const Gamesetup = ({onStart}:Props) => {
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
   const [playerNames, setPlayerNames] = useState<string[]>([]);
   const [roleCounts, setRoleCounts] = useState<{ [key: string]: number }>({});
+  const [error, setError] = useState<string | null>(null); 
 
   const handleNext = () => {
     if (step === 1 && numberOfPlayers > 0) {
       const defaultNames = Array.from({ length: numberOfPlayers }, (_, i) => `Player ${i + 1}`);
       setPlayerNames(defaultNames);
       setStep(2);
+      setError(null);
     } else if (step === 2 && playerNames.every(name => name.trim() !== '')) {
       setStep(3);
+      setError(null);
     } else if (step === 3) {
       const totalRoles = Object.values(roleCounts).reduce((acc, count) => acc + count, 0);
       if (totalRoles === numberOfPlayers) {
         onStart(numberOfPlayers, playerNames, roleCounts);
+        setError(null);
       } else {
-        alert(`The total number of roles must be equal to the number of players (${numberOfPlayers}).`);
+        setError(`The total number of roles must be equal to the number of players (${numberOfPlayers}).`);
       }
     } else {
-      alert('Please complete all fields.');
+      setError('Please complete all fields.');
     }
   };
 
@@ -51,6 +56,7 @@ const Gamesetup = ({onStart}:Props) => {
   return (
     <div className="max-w-sm mx-auto bg-onyx border-onyx p-8 rounded-xl shadow-md">
       <h2 className="text-xl text-white font-semibold mb-4">Game Setup</h2>
+      {error && <div className="text-red mb-4">{error}</div>}
       {step === 1 && (
         <>
           <label className="block text-sm font-medium text-white mb-2">
