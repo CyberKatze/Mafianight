@@ -9,7 +9,15 @@ import Loginform from './components/Loginform.tsx';
 import Roles from './routes/roles.tsx';
 import RoleCards from './routes/rolecards.tsx';
 import Voting from './routes/voting.tsx';
+import Gamesetup from './components/Gamesetup.tsx';
 
+
+const handleStart = (numberOfPlayers: number, playerNames: string[], roles: { [key: string]: number }) => {
+  console.log('Number of Players:', numberOfPlayers);
+  console.log('Player Names:', playerNames);
+  console.log('Roles:', roles);
+  
+};
 const router = createBrowserRouter([
   {
     path: '/',
@@ -26,7 +34,8 @@ const router = createBrowserRouter([
       },
       { path: 'roles/', element: <Roles /> },
       { path: 'rolecards/', element: <RoleCards /> },
-      { path: 'voting/', element: <Voting /> }
+      { path: 'voting/', element: <Voting /> },
+      { path: 'game/', element: <Gamesetup onStart={handleStart}  />},
     ],
   },
 ])
