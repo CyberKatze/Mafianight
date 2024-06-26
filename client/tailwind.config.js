@@ -19,9 +19,8 @@ export default {
           "pink": "#ff79c6",
           "sky": "#8be9fd",
           "mint": "#50fa7b",
-          "lemon": "#f1fa8c",
           "peach": "#ffb86c",
-          "red": "#ff5555"
+          "red": "#f98686"
         
         
     },
