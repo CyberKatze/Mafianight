@@ -10,6 +10,15 @@ services:
       - "${YESOD_PGPORT}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  db-test:
+    image: postgres:15.7
+    container_name: db-test
+    environment:
+      POSTGRES_USER: ${YESOD_PGUSER}
+      POSTGRES_PASSWORD: ${YESOD_PGPASS}
+      POSTGRES_DB: ${YESOD_PGDATABASE_TEST}
+    ports:
+      - "${YESOD_PGPORT_TEST}:5432"
 volumes:
   postgres_data:
     driver: local

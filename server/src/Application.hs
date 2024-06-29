@@ -58,7 +58,6 @@ import Handler.Turn
 import Handler.Event
 import Handler.Game
 import Handler.Player
-
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have
@@ -103,8 +102,6 @@ makeFoundation appSettings = do
 
     -- Perform database migration using our application's logging settings.
     runLoggingT (runSqlPool (runMigration migrateAll) pool) logFunc
-
-    runSqlPool (loadSeedData) pool
 
     -- Return the foundation
     return $ mkFoundation pool
@@ -155,6 +152,8 @@ getApplicationDev :: IO (Settings, Application)
 getApplicationDev = do
     settings <- getAppSettings
     foundation <- makeFoundation settings
+    -- Load seed data
+    runSqlPool (loadSeedData) (appConnPool foundation)
     wsettings <- getDevSettings $ warpSettings foundation
     app <- makeApplication foundation
     return (wsettings, app)

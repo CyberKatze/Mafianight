@@ -18,6 +18,8 @@ import Text.Shakespeare.Text (st)
 import Yesod.Default.Config2 (useEnv, loadYamlSettings)
 import Yesod.Auth            as X
 import Yesod.Test            as X
+import JWTUtils              as X
+import Network.Wai.Test      (SResponse(..))
 import Yesod.Core.Unsafe     (fakeHandlerGetLogger)
 
 runDB :: SqlPersistM a -> YesodExample App a
@@ -75,12 +77,12 @@ getTables = do
 -- | Authenticate as a user. This relies on the `auth-dummy-login: true` flag
 -- being set in test-settings.yaml, which enables dummy authentication in
 -- Foundation.hs
-authenticateAs :: Entity User -> YesodExample App ()
-authenticateAs (Entity _ u) = do
-    request $ do
-        setMethod "POST"
-        addPostParam "ident" $ userIdent u
-        setUrl $ AuthR $ PluginR "dummy" []
+-- authenticateAs :: Entity User -> YesodExample App ()
+-- authenticateAs (Entity _ u) = do
+--     request $ do
+--         setMethod "POST"
+--         addPostParam "ident" $ userIdent u
+--         setUrl $ AuthR $ PluginR "dummy" []
 
 -- | Create a user.  The dummy email entry helps to confirm that foreign-key
 -- checking is switched off in wipeDB for those database backends which need it.
@@ -96,3 +98,11 @@ createUser ident = runDB $ do
         , emailVerkey = Nothing
         }
     return user
+
+createGame :: Text -> YesodExample App (Entity Game)
+createGame name = runDB $ do
+    game <- insertEntity Game
+        { gameName = name
+        , gameCurrentTurn = Nothing
+        }
+    return game

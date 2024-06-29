@@ -3,7 +3,6 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ExplicitForAll #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
 module Seeder (loadSeedData) where
 
 import ClassyPrelude.Yesod
@@ -22,10 +21,9 @@ loadSeedData  = do
     -- Example for inserting roles from a JSON file
     case decodeStrict (encodeUtf8 content):: (Maybe [Role]) of
         Just roles ->  do
-            forM_ roles $ \r -> do
+          -- upsert each role
+          forM_ roles $ \r -> do
               _ <- upsert r [RoleName =. roleName r]
-              liftIO $ putStrLn $ "Inserted role " <> (roleName r)
+              return ()
         Nothing -> liftIO $ putStrLn $ "Failed to parse " ++ pack rolePath
-
--- Example decode function (you should adapt this to your data structure)
 

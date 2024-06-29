@@ -14,13 +14,13 @@ import Data.Maybe (fromJust)
 -- More information for user claims
 -- can be data, for more fields 
 newtype Claims = Claims
-   {admin:: Bool } deriving (Show, Generic)
+   { admin:: Bool } deriving (Show, Generic)
+
 instance ToJSON Claims
 instance FromJSON Claims
 
 claimsToClaimsMap :: Claims -> ClaimsMap 
-claimsToClaimsMap c = ClaimsMap $ fromJust ( A.decode (A.encode c ) :: Maybe (M.Map Text Value))
-
+claimsToClaimsMap c = ClaimsMap $ fromJust ( A.decode (A.encode c ) :: Maybe (M.Map Text Value)) -- type conversion from Recrod to Map
 
 createJWT :: Text -> Text -> Integer -> Claims -> IO Text
 createJWT secret user expTime claims = do
@@ -30,10 +30,10 @@ createJWT secret user expTime claims = do
       expTimeUTC = addUTCTime (fromInteger expTime) now
       cs = mempty { 
             Web.JWT.iss = stringOrURI "my-app"
-          , Web.JWT.exp = numericDate (utcTimeToPOSIXSeconds expTimeUTC::NominalDiffTime)
+          , Web.JWT.exp = numericDate (utcTimeToPOSIXSeconds expTimeUTC::NominalDiffTime) -- Absolute time of expiration
           , Web.JWT.iat = numericDate (utcTimeToPOSIXSeconds now::NominalDiffTime)
-          ,  Web.JWT.sub = stringOrURI user,  -- Add username as the "sub" claim
-            unregisteredClaims = claimsToClaimsMap claims -- more claims
+          , Web.JWT.sub = stringOrURI user  -- Add username as the "sub" claim
+          ,  unregisteredClaims = claimsToClaimsMap claims -- more claims
           }
           -- add Payload into unregisteredClaims
       key = hmacSecret secret
@@ -42,9 +42,5 @@ createJWT secret user expTime claims = do
       -- TIO.putStrLn $ "Generated JWT: " <> token
       return token
 
-verifyJWT :: Text -> Text -> IO (Maybe (JWT VerifiedJWT))
-verifyJWT secret token = do
-  let 
-    vjwt = decodeAndVerifySignature (toVerify . hmacSecret $  secret) token
-    in
-    return vjwt 
+verifyJWT :: Text -> Text -> Maybe (JWT VerifiedJWT)
+verifyJWT secret token = decodeAndVerifySignature (toVerify . hmacSecret $  secret) token

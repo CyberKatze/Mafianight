@@ -4,20 +4,20 @@
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE ViewPatterns #-}
-{-# LANGUAGE ExplicitForAll #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE DeriveGeneric #-}
 module Foundation where
 
 import Yesod.Core.Types     (Logger)
-import Database.Persist.Sql (ConnectionPool)
+import Database.Persist.Sql (ConnectionPool, runSqlPool)
 import Settings 
-import ClassyPrelude.Yesod
+import ClassyPrelude.Yesod 
 
 import Data.Kind            (Type)
-import Database.Persist.Sql (runSqlPool)
 import Control.Monad.Logger (LogSource)
 import qualified Yesod.Core.Unsafe as Unsafe
+import JWTUtils
 
 -- Used only when in "auth-dummy-login" setting is enabled.
 
@@ -40,6 +40,14 @@ type Form x = Html -> MForm (HandlerFor App) (FormResult x, Widget)
 type DB a = forall (m :: Type -> Type).
     (MonadUnliftIO m) => ReaderT SqlBackend m a
 
+data ErrorResp = ErrorResp
+    { message :: Text
+    } deriving (Show, Generic)
+
+instance ToJSON ErrorResp
+
+custom403 :: Text -> Handler Value
+custom403 msg = returnJson $ ErrorResp msg
 -- Please see the documentation for the Yesod typeclass. There are a number
 -- of settings which can be configured by overriding methods here.
 instance Yesod App where
@@ -54,8 +62,40 @@ instance Yesod App where
 
     makeLogger :: App -> IO Logger
     makeLogger = return . appLogger
+    errorHandler NotAuthenticated = toTypedContent <$> custom403 "You must login to access this resource"
+    errorHandler (PermissionDenied msg) = toTypedContent <$> custom403 msg
+    errorHandler NotFound = toTypedContent <$> custom403 "Resource not found"
+    errorHandler other = defaultErrorHandler other
 
--- Define breadcrumbs.
+    isAuthorized RoleR _ = return Authorized
+    isAuthorized GameR _ = isUser
+    isAuthorized UserR _ = isUser
+    isAuthorized TurnR _ = isUser
+    isAuthorized EventR _ = isUser
+    isAuthorized PlayerR _ = isUser
+
+-- lookupBearerAuth :: Handler (Maybe Text)
+-- lookupBearerAuth = do
+--   token <- lookupHeader "Authorization"
+--   case token of
+--     Just bs -> if "Bearer " `isPrefixOf` bs
+--               then return $ Just $ drop 7 $ decodeUtf8 bs
+--               else return Nothing
+--     Nothing -> return Nothing
+
+isUser :: HandlerFor App AuthResult
+isUser = do
+  mtoken <- lookupBearerAuth
+  setting <- appSettings <$> getYesod
+  case mtoken of
+    Just token -> do
+      let secret = appJWTSecret setting
+      case verifyJWT secret token of
+        Just _ -> return Authorized
+        Nothing -> return $ Unauthorized "Invalid token"
+    Nothing -> return $ Unauthorized "You must login to access this resource"
+
+
 -- How to run database actions.
 instance YesodPersist App where
     type YesodPersistBackend App = SqlBackend
@@ -67,7 +107,6 @@ instance YesodPersist App where
 instance YesodPersistRunner App where
     getDBRunner :: Handler (DBRunner App, Handler ())
     getDBRunner = defaultGetDBRunner appConnPool
-
 
 unsafeHandler :: App -> Handler a -> IO a
 unsafeHandler = Unsafe.fakeHandlerGetLogger appLogger
