@@ -18,7 +18,7 @@ import Text.Shakespeare.Text (st)
 import Yesod.Default.Config2 (useEnv, loadYamlSettings)
 import Yesod.Auth            as X hiding (LoginR)
 import Yesod.Test            as X
-import JWTUtils              as X
+import Utils              as X
 import Yesod.Core.Unsafe     (fakeHandlerGetLogger)
 import Settings              (appSalt, appJWTSecret)
 import Yesod.Auth.Util.PasswordStore (makePasswordSalt, makeSalt)
@@ -26,6 +26,8 @@ import Network.Wai.Test      as X (SResponse(..))
 import Data.Aeson
 import Control.Monad.Trans.Maybe as X
 import qualified Data.ByteString.Lazy as BL
+import Types  as X
+import Utils as X (textToKey)
 
 runDB :: SqlPersistM a -> YesodExample App a
 runDB query = do
@@ -100,9 +102,9 @@ getJWTSecret :: YesodExample App Text
 getJWTSecret = appJWTSecret . appSettings <$> getTestYesod
 
 generateTokenTest :: Text -> Claims -> YesodExample App Text
-generateTokenTest user claims = do
+generateTokenTest userId claims = do
   secret <-  appJWTSecret . appSettings <$> getTestYesod
-  token <- liftIO $ createJWT secret user 3600 claims
+  token <- liftIO $ createJWT secret (textToKey userId) 3600 claims
   return token
 
 createUser :: Text -> Text -> Text -> Bool -> YesodExample App (Entity User)

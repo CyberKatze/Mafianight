@@ -1,29 +1,33 @@
 {-# LANGUAGE NoImplicitPrelude #-}
-{-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
-module JWTUtils where
-
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE TypeFamilies #-}
+module Utils ( Claims(..), claimsToClaimsMap, textToKey, keyToText, createJWT, verifyJWT) where
+import ClassyPrelude.Yesod 
+import Database.Esqueleto.Experimental (toSqlKey, fromSqlKey)
 import Web.JWT
-import ClassyPrelude.Yesod
 import Data.Time.Clock (NominalDiffTime, addUTCTime)
 import Data.Time.Clock.POSIX (utcTimeToPOSIXSeconds)
 import Data.Map.Strict as M
 import qualified Data.Aeson as A 
+import Model (UserId)
+import Types 
+import Text.Read (read)
 import Data.Maybe (fromJust)
+import qualified Data.Text as T (unpack) 
+  
+keyToText :: UserId -> Text
+keyToText = pack . show . fromSqlKey
 
--- More information for user claims
--- can be data, for more fields 
-newtype Claims = Claims
-   { admin:: Bool } deriving (Show, Generic)
+textToKey :: Text -> UserId
+textToKey = toSqlKey . (read) . T.unpack
 
-instance ToJSON Claims
-instance FromJSON Claims
 
 claimsToClaimsMap :: Claims -> ClaimsMap 
 claimsToClaimsMap c = ClaimsMap $ fromJust ( A.decode (A.encode c ) :: Maybe (M.Map Text Value)) -- type conversion from Recrod to Map
 
-createJWT :: Text -> Text -> Integer -> Claims -> IO Text
-createJWT secret user expTime claims = do
+createJWT :: Text -> UserId -> Integer -> Claims -> IO Text
+createJWT secret userId expTime claim = do
   now <- getCurrentTime
   let 
       header = Web.JWT.JOSEHeader { typ = Just "JWT", cty = Nothing, alg = Just HS256, kid = Nothing }
@@ -32,8 +36,8 @@ createJWT secret user expTime claims = do
             Web.JWT.iss = stringOrURI "my-app"
           , Web.JWT.exp = numericDate (utcTimeToPOSIXSeconds expTimeUTC::NominalDiffTime) -- Absolute time of expiration
           , Web.JWT.iat = numericDate (utcTimeToPOSIXSeconds now::NominalDiffTime)
-          , Web.JWT.sub = stringOrURI user  -- Add username as the "sub" claim
-          ,  unregisteredClaims = claimsToClaimsMap claims -- more claims
+          , Web.JWT.sub = stringOrURI (keyToText userId)  -- Add username as the "sub" claim
+          ,  unregisteredClaims = claimsToClaimsMap claim -- more claims
           }
           -- add Payload into unregisteredClaims
       key = hmacSecret secret

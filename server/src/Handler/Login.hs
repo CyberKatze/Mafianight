@@ -9,7 +9,8 @@ import Database.Esqueleto.Experimental hiding (Value)
 import ClassyPrelude.Yesod  hiding ((==.), on)
 import Foundation
 import Model
-import JWTUtils (Claims(..))
+import Types ( Token(..))
+import Types (Claims(..))
 
 data UserAuth = UserAuth
   { email :: Text
@@ -39,7 +40,7 @@ getLoginR = do
     -- generate token
     case user of
       [Entity userId user] -> do
-        token <-  generateToken (pack $ show userId) (Claims { admin = userAdmin user})
+        token <-  generateToken userId (Claims { admin = userAdmin user})
         returnJson Token { bearerToken = token}
               
       _ -> sendStatusJSON status401 $ object [fromString "message" .= ("Invalid username or password" )]
