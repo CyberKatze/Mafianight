@@ -42,6 +42,7 @@ data AppSettings = AppSettings
     -- ^ Get the IP address from the header when logging. Useful when sitting
     -- behind a reverse proxy.
     , appJWTSecret              :: Text
+    , appSalt                   :: Text
 
     , appDetailedRequestLogging :: Bool
     -- ^ Use detailed request logging system
@@ -79,6 +80,7 @@ instance FromJSON AppSettings where
         appPort                   <- o .: "port"
         appIpFromHeader           <- o .: "ip-from-header"
         appJWTSecret              <- o .: "jwt-secret"
+        appSalt                   <- o .: "salt"
 
         dev                       <- o .:? "development"      .!= defaultDev
 

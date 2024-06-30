@@ -45,7 +45,6 @@ import Model
 import Settings              
 import Yesod.Core.Types       (loggerSet)
 import Yesod.Default.Config2 
-
 -- Used only when in "auth-dummy-login" setting is enabled.
 
 import Seeder
@@ -58,6 +57,7 @@ import Handler.Turn
 import Handler.Event
 import Handler.Game
 import Handler.Player
+import Handler.Login
 -- | The foundation datatype for your application. This can be a good place to
 -- keep settings and values requiring initialization before your application
 -- starts running, such as database connections. Every handler will have

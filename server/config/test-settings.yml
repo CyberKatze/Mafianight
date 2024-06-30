@@ -6,6 +6,8 @@ database:
   # something like:
   #
   #   database: "_env:SQLITE_DATABASE:haskell-web_test.sqlite3"
+  jwt-secret: "_env:JWT_SECRET:secret"
+  salt: "_env:SALT:secretsalty"
   database: mafia-db_test
   port:     "_env:YESOD_PGPORT_TEST:54321"
   # See config/test-settings.yml for an override during tests

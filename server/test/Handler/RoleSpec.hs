@@ -3,45 +3,43 @@
 module Handler.RoleSpec (spec) where
 
 import TestImport
-import Data.Aeson
+import Seeder (loadSeedData)
 
 spec :: Spec
 spec = withApp $ do
-    describe "valid request" $ do
-        it "gives a 200" $ do
-            get RoleR
-            statusIs 200
---
---             let message = "My message" :: Text
---                 body = object [ "message" .= message ]
---                 encoded = encode body
---
---             request $ do
---                 setMethod "POST"
---                 setUrl CommentR
---                 setRequestBody encoded
---                 addRequestHeader ("Content-Type", "application/json")
---
---             statusIs 200
---
---             comments <- runDB $ selectList [CommentMessage ==. message] []
---             Entity _id comment <-
---                 case comments of
---                     [ent] -> pure ent
---                     _ -> error "needed 1 entity"
---             assertEq "Should have " comment (Comment message Nothing)
---
---     describe "invalid requests" $ do
---         it "400s when the JSON body is invalid" $ do
---             get HomeR
---
---             let body = object [ "foo" .= ("My message" :: Value) ]
---
---             request $ do
---                 setMethod "POST"
---                 setUrl CommentR
---                 setRequestBody $ encode body
---                 addRequestHeader ("Content-Type", "application/json")
---
---             statusIs 400
+    describe "Test role route" $ do
+        it "give us list of roles with status 200" $ do
+            let email = "user@exammple.com"
+                pass = "securepass"
 
+            -- create a user
+            _ <- createUser email "user" pass False
+
+            -- load seed data
+            connPool <-  appConnPool  <$> getTestYesod
+            liftIO $ runSqlPool loadSeedData connPool
+
+            mtoken <- login email pass
+            case mtoken of
+              Nothing -> error "Invalid token"
+              Just token -> do
+
+                request $ do
+                    setMethod "GET"
+                    setUrl RoleR
+                    addRequestHeader ("Content-Type", "application/json")
+                    addRequestHeader ("Authorization", "Bearer " <> encodeUtf8(bearerToken token))
+
+                -- decode the response body to Roles
+                mRoles <- runMaybeT fetchDecodedBody:: YesodExample App (Maybe [Role])
+
+                case mRoles of
+                  Nothing -> error "Invalid roles"
+                  Just roles -> do
+                    -- should have a roles with name "mafia" in the list
+                    assertNotEq "Should have " (filter (((==) "mafia"). toLower . roleName) roles) []
+                    --should have a roles with name "villager" in the list
+                    assertNotEq "Should have " (filter (((==) "villager"). toLower . roleName) roles) []
+                                    
+
+                statusIs 200

@@ -8,19 +8,24 @@ module TestImport
 
 import Application           (makeFoundation, makeLogWare)
 import ClassyPrelude         as X hiding (delete, deleteBy, Handler)
-import Database.Persist      as X hiding (get)
-import Database.Persist.Sql  (SqlPersistM, runSqlPersistMPool, rawExecute, rawSql, unSingle)
+import Database.Esqueleto.Experimental  (SqlPersistM, runSqlPersistMPool, runSqlPool, rawExecute, rawSql, unSingle, insert, Entity, insertEntity, entityKey)
+import qualified Database.Esqueleto.Experimental  as X
 import Database.Persist.SqlBackend (getEscapedRawName)
-import Foundation            as X
+import Foundation            as X 
 import Model                 as X
 import Test.Hspec            as X
 import Text.Shakespeare.Text (st)
 import Yesod.Default.Config2 (useEnv, loadYamlSettings)
-import Yesod.Auth            as X
+import Yesod.Auth            as X hiding (LoginR)
 import Yesod.Test            as X
 import JWTUtils              as X
-import Network.Wai.Test      (SResponse(..))
 import Yesod.Core.Unsafe     (fakeHandlerGetLogger)
+import Settings              (appSalt, appJWTSecret)
+import Yesod.Auth.Util.PasswordStore (makePasswordSalt, makeSalt)
+import Network.Wai.Test      as X (SResponse(..))
+import Data.Aeson
+import Control.Monad.Trans.Maybe as X
+import qualified Data.ByteString.Lazy as BL
 
 runDB :: SqlPersistM a -> YesodExample App a
 runDB query = do
@@ -86,18 +91,49 @@ getTables = do
 
 -- | Create a user.  The dummy email entry helps to confirm that foreign-key
 -- checking is switched off in wipeDB for those database backends which need it.
-createUser :: Text -> YesodExample App (Entity User)
-createUser ident = runDB $ do
-    user <- insertEntity User
-        { userIdent = ident
-        , userPassword = Nothing
-        }
-    _ <- insert Email
-        { emailEmail = ident
-        , emailUserId = Just $ entityKey user
-        , emailVerkey = Nothing
-        }
-    return user
+hashPasswordTest :: Text -> YesodExample App Text
+hashPasswordTest password = do
+  salt <- encodeUtf8 . appSalt . appSettings <$> getTestYesod
+  return $ decodeUtf8 $ makePasswordSalt (encodeUtf8 password) (makeSalt salt) 16
+
+getJWTSecret :: YesodExample App Text
+getJWTSecret = appJWTSecret . appSettings <$> getTestYesod
+
+generateTokenTest :: Text -> Claims -> YesodExample App Text
+generateTokenTest user claims = do
+  secret <-  appJWTSecret . appSettings <$> getTestYesod
+  token <- liftIO $ createJWT secret user 3600 claims
+  return token
+
+createUser :: Text -> Text -> Text -> Bool -> YesodExample App (Entity User)
+createUser email userName pass admin = do 
+    pass <- hashPasswordTest pass
+    runDB $ do    
+      user <- insertEntity User
+          { userUserName = userName
+          , userPassword = Just pass
+          , userAdmin = admin
+          }
+      _ <- insert Email
+          { emailEmail = email
+          , emailUserId = entityKey user
+          , emailVerkey = Nothing
+          }
+      return user
+
+login :: Text -> Text  -> YesodExample App (Maybe Token)
+login email pass = do
+  let body = object ["email" .= email, "password" .= pass]
+      encoded = encode body
+
+  -- send request with correct email and password
+  request $ do
+      setMethod "GET"
+      setUrl LoginR
+      setRequestBody encoded
+      addRequestHeader ("Content-Type", "application/json")
+  
+  (maybe Nothing ((maybe Nothing id) . (decode) . simpleBody) ) <$> getResponse
 
 createGame :: Text -> YesodExample App (Entity Game)
 createGame name = runDB $ do
@@ -106,3 +142,14 @@ createGame name = runDB $ do
         , gameCurrentTurn = Nothing
         }
     return game
+
+-- Generalized function using MaybeT to fetch and decode body
+fetchDecodedBody :: (FromJSON a) =>  MaybeT (YesodExample App) a
+fetchDecodedBody  = do
+    mresponse <- lift getResponse
+    case mresponse of
+      Nothing -> error "No response"
+      Just response -> do
+        case decode (simpleBody response) of
+            Just decodedValue -> return decodedValue
+            Nothing           -> error "Failed to decode response body"

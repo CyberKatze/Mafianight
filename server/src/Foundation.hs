@@ -10,7 +10,7 @@
 module Foundation where
 
 import Yesod.Core.Types     (Logger)
-import Database.Persist.Sql (ConnectionPool, runSqlPool)
+import Database.Esqueleto.Experimental (ConnectionPool, runSqlPool)
 import Settings 
 import ClassyPrelude.Yesod 
 
@@ -18,7 +18,10 @@ import Data.Kind            (Type)
 import Control.Monad.Logger (LogSource)
 import qualified Yesod.Core.Unsafe as Unsafe
 import JWTUtils
-
+import Yesod.Auth.Util.PasswordStore
+import Yesod.Auth hiding (LoginR)
+import Web.JWT
+-- import Control.Monad.Trans.Maybe (runMaybeT, runMaybeT)
 -- Used only when in "auth-dummy-login" setting is enabled.
 
 data App = App
@@ -45,6 +48,7 @@ data ErrorResp = ErrorResp
     } deriving (Show, Generic)
 
 instance ToJSON ErrorResp
+instance FromJSON ErrorResp
 
 custom403 :: Text -> Handler Value
 custom403 msg = returnJson $ ErrorResp msg
@@ -62,7 +66,7 @@ instance Yesod App where
 
     makeLogger :: App -> IO Logger
     makeLogger = return . appLogger
-    errorHandler NotAuthenticated = toTypedContent <$> custom403 "You must login to access this resource"
+    errorHandler NotAuthenticated = toTypedContent <$> custom403 "User not authenticated"
     errorHandler (PermissionDenied msg) = toTypedContent <$> custom403 msg
     errorHandler NotFound = toTypedContent <$> custom403 "Resource not found"
     errorHandler other = defaultErrorHandler other
@@ -73,28 +77,60 @@ instance Yesod App where
     isAuthorized TurnR _ = isUser
     isAuthorized EventR _ = isUser
     isAuthorized PlayerR _ = isUser
+    isAuthorized LoginR _ = return Authorized
 
--- lookupBearerAuth :: Handler (Maybe Text)
--- lookupBearerAuth = do
---   token <- lookupHeader "Authorization"
---   case token of
---     Just bs -> if "Bearer " `isPrefixOf` bs
---               then return $ Just $ drop 7 $ decodeUtf8 bs
---               else return Nothing
---     Nothing -> return Nothing
+instance YesodAuth App where
+  type AuthId App = Text
+
+  loginDest _ = LoginR
+  logoutDest _ = LoginR
+
+  -- authenticate creds = 
+  -- maybeAuthId  :: (MonadHandler m, App ~ HandlerSite m )  => m (Maybe (Auth App))
+  maybeAuthId =  do
+    mtoken <- lookupBearerAuth
+    secret <-  (appJWTSecret . appSettings) <$> getYesod
+    case mtoken of
+      Just token -> do
+        case verifyJWT secret token of
+          Just c -> do 
+            return $ stringOrURIToText <$> (sub $ claims c)
+          Nothing -> return Nothing
+      Nothing -> return Nothing
+    --
+instance RenderMessage App FormMessage where
+    renderMessage _ _ = defaultFormMessage
 
 isUser :: HandlerFor App AuthResult
 isUser = do
-  mtoken <- lookupBearerAuth
-  setting <- appSettings <$> getYesod
-  case mtoken of
-    Just token -> do
-      let secret = appJWTSecret setting
-      case verifyJWT secret token of
-        Just _ -> return Authorized
-        Nothing -> return $ Unauthorized "Invalid token"
-    Nothing -> return $ Unauthorized "You must login to access this resource"
+  maid <- maybeAuthId
 
+  case maid of
+    Just _ -> return Authorized
+    Nothing -> return $ Unauthorized "User not authenticated"
+
+
+
+-- instance Creds Aapp where
+
+hashPassword :: Text -> HandlerFor App Text
+hashPassword password = do
+  salt <- encodeUtf8 . appSalt . appSettings <$> getYesod
+  return $ decodeUtf8 $ makePasswordSalt (encodeUtf8 password) (makeSalt salt) 16
+
+generateToken :: Text -> Claims -> HandlerFor App Text
+generateToken user claims = do
+  secret <-  appJWTSecret . appSettings <$> getYesod
+  token <- liftIO $ createJWT secret user 3600 claims
+  return token
+  
+
+data Token = Token
+  { bearerToken :: Text
+  } deriving (Show, Generic)
+
+instance FromJSON Token
+instance ToJSON Token
 
 -- How to run database actions.
 instance YesodPersist App where

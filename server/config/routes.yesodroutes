@@ -12,3 +12,6 @@
 /turns TurnR GET POST
 
 /users UserR GET POST
+
+/login LoginR GET
+
