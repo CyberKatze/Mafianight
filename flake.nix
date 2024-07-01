@@ -24,6 +24,9 @@
             pgcli
           ];
           NIX_PATH = "nixpkgs=" + pkgs.path;
+          PLAYWRIGHT_LAUNCH_OPTIONS_EXECUTABLE_PATH ="${pkgs.playwright-driver.browsers}/chromium-1091/chrome-linux/chrome";
+          PLAYWRIGHT_BROWSERS_PATH="${pkgs.playwright-driver.browsers}";
+          PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS="true";
         };
       });
     };
