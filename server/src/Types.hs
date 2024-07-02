@@ -4,7 +4,7 @@
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE DeriveGeneric #-}
 
-module Types (ErrorResp(..), custom403, Token(..), Claims(..))
+module Types (ErrorResp(..), custom403, Token(..), Claims(..), UserInfo(..))
 where
 import ClassyPrelude.Yesod 
 
@@ -31,3 +31,13 @@ newtype Claims = Claims
 
 instance ToJSON Claims
 instance FromJSON Claims
+
+--  | User Infor for the me route
+data UserInfo = UserInfo
+  { email :: Text
+  , userName :: Text
+  , isAdmin :: Bool
+  } deriving (Show, Generic)
+
+instance ToJSON UserInfo
+instance FromJSON UserInfo

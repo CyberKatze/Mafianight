@@ -69,6 +69,7 @@ instance Yesod App where
     isAuthorized TurnR _ = isUser
     isAuthorized EventR _ = isUser
     isAuthorized PlayerR _ = isUser
+    isAuthorized MeR _ = isUser
     isAuthorized LoginR _ = return Authorized
 
 
