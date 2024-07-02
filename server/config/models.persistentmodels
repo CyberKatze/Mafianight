@@ -3,7 +3,7 @@
 
 User json
   userName Text
-  password Text Maybe
+  password Text 
   admin Bool
   UniqueUser userName
   deriving Typeable

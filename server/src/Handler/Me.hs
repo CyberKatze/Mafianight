@@ -34,7 +34,7 @@ getMeR = do
         -- -- generate token
         case userEmail of
           [(Entity _ user, Entity _ email)] -> do
-            returnJson UserInfo { email = emailEmail email, userName = userUserName user, isAdmin = userAdmin user}
+            returnJson UserInfo { userInfoEmail = emailEmail email, userInfoUserName = userUserName user, userInfoAdmin = userAdmin user}
                   
                   
           _ -> sendStatusJSON status401 $ object [fromString "message" .= ("Invalid username or password" )]

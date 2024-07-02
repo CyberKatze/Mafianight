@@ -16,3 +16,5 @@
 /login LoginR GET
 
 /me MeR GET
+
+/register RegisterR POST

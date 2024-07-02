@@ -61,6 +61,9 @@ instance Yesod App where
     errorHandler NotAuthenticated = toTypedContent <$> custom403 "User not authenticated"
     errorHandler (PermissionDenied msg) = toTypedContent <$> custom403 msg
     errorHandler NotFound = toTypedContent <$> custom403 "Resource not found"
+    errorHandler (InvalidArgs _) = toTypedContent <$> custom403 "Invalid arguments"
+    errorHandler (BadMethod _) = toTypedContent <$> custom403 "Invalid method"
+    errorHandler (InternalError e) = toTypedContent <$> custom403 e
     errorHandler other = defaultErrorHandler other
 
     isAuthorized RoleR _ = return Authorized
@@ -71,6 +74,7 @@ instance Yesod App where
     isAuthorized PlayerR _ = isUser
     isAuthorized MeR _ = isUser
     isAuthorized LoginR _ = return Authorized
+    isAuthorized RegisterR _ = return Authorized
 
 
 instance YesodAuth App where

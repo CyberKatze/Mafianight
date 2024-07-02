@@ -40,8 +40,8 @@ spec = withApp $ do
                 case mUserInfo of
                   Nothing -> error "Invalid roles"
                   Just userInfo -> do
-                    assertEq "Should have " (userName userInfo)  username1
-                    assertEq "Should have " (email userInfo)  email1
+                    assertEq "Should have " (userInfoUserName userInfo)  username1
+                    assertEq "Should have " (userInfoEmail userInfo)  email1
 
                 statusIs 200
 

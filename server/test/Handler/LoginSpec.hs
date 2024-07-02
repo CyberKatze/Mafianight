@@ -11,12 +11,16 @@ spec :: Spec
 spec = withApp $ do
     describe "Login route" $ do
         it "assert the token returned for a correct email pass" $ do
+          let user = "user"
+              email = "user@example.com"
+              pass = "securepass"
+
           secret <- getJWTSecret
           let expectedClaimMap = claimsToClaimsMap Claims {admin = False}
           -- Create a user without admin role
-          _ <- createUser "user@example.com" "user" "securepass" False
+          _ <- createUser email user pass False
 
-          let body = object ["email" .= ("user@example.com" :: Text), "password" .= ("securepass" :: Text)]
+          let body = object ["email" .= email, "password" .= pass]
               encoded = encode body
         
           -- send request with correct email and password
@@ -26,7 +30,7 @@ spec = withApp $ do
               setRequestBody encoded
               addRequestHeader ("Content-Type", "application/json")
 
-          responseBody <- (maybe ("no resonse") simpleBody ) <$> getResponse
+          responseBody <- (maybe ("no response") simpleBody ) <$> getResponse
 
           case  ( decode responseBody ):: Maybe Token of
             Just token -> maybe (error "Invalid token") (\ jwt -> assertEq "Claim should be" expectedClaimMap (J.unregisteredClaims (J.claims jwt))) (verifyJWT secret (bearerToken token))

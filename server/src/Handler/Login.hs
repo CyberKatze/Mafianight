@@ -9,22 +9,14 @@ import Database.Esqueleto.Experimental hiding (Value)
 import ClassyPrelude.Yesod  hiding ((==.), on)
 import Foundation
 import Model
-import Types ( Token(..))
-import Types (Claims(..))
+import Types ( Token(..), UserAuth(..), Claims(..))
 
-data UserAuth = UserAuth
-  { email :: Text
-  , password :: Text
-  } deriving (Show, Generic)
-
-instance FromJSON UserAuth
-instance ToJSON UserAuth
 
 getLoginR :: Handler Value
 getLoginR = do
 
     userAuth <- (requireCheckJsonBody :: Handler UserAuth)
-    pass <- hashPassword (password userAuth)
+    pass <- hashPassword (userAuthPassword userAuth)
 
     -- user <- runDB $ selectFirst [UserUserName ==. (username userAuth), UserPassword ==. Just pass] []
     user <- runDB(  
@@ -33,7 +25,7 @@ getLoginR = do
         from $ table @User
         `leftJoin` table @Email
         `on` (\(user :& _email) -> just (user ^. UserId) ==. _email ?. EmailUserId)
-      where_ ( user ^. UserPassword ==. val (Just pass))
+      where_ ( user ^. UserPassword ==. val pass)
       pure user
       )
 

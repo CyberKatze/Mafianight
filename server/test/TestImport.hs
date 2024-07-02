@@ -113,7 +113,7 @@ createUser email userName pass admin = do
     runDB $ do    
       user <- insertEntity User
           { userUserName = userName
-          , userPassword = Just pass
+          , userPassword = pass
           , userAdmin = admin
           }
       _ <- insert Email
