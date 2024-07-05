@@ -2,7 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TemplateHaskell   #-}
 module Settings.StaticFiles where
-
+--
 import Settings     (appStaticDir, compileTimeAppSettings)
 import Yesod.Static (staticFiles)
 
@@ -18,7 +18,7 @@ import Yesod.Static (staticFiles)
 -- If the identifier is not available, you may use:
 --
 --     StaticFile ["js", "script.js"] []
-staticFiles (appStaticDir compileTimeAppSettings)
+-- staticFiles (appStaticDir compileTimeAppSettings)
 
 -- If you prefer to updating the references by force
 --  -- especially when you are devloping like `stack exec -- yesod devel` --
