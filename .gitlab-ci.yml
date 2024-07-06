@@ -18,7 +18,7 @@ prepare_frontend:
 prepare_backend:
   stage: prepare
   script:
-    - echo "prepare backend"
+    - nix develop -c bash -c "make pre-back"
   artifacts:
     paths:
       - server/.stack-work
@@ -35,14 +35,14 @@ test_backend:
   dependencies:
     - prepare_backend
   script:
-    - echo "test backend"
+    - nix develop -c bash -c "make test-back"
 
 build_backend:
   stage: build
   dependencies:
     - prepare_backend
   script:
-    - ecoh "build backend"
+    - echo "build backend"
   artifacts:
     paths:
       - server/.stack-work
