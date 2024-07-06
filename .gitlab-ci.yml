@@ -8,16 +8,11 @@ variables:
 
 before_script:
   # Check if Nix is already installed
-  - |
-    if ! command -v nix &> /dev/null; then
-      echo "Nix is not installed. Installing Nix..."
-      mkdir -m 0755 /nix && chown $USER /nix
-      curl -L https://nixos.org/nix/install | sh
-      . /home/$USER/.nix-profile/etc/profile.d/nix.sh
-    else
-      echo "Nix is already installed."
-      . /home/$USER/.nix-profile/etc/profile.d/nix.sh
-    fi
+  # Setup Nix
+  - echo "Setting up Nix"
+  - mkdir -m 0755 /nix && chown $USER /nix
+  - curl -L https://nixos.org/nix/install | sh
+  - . /home/$USER/.nix-profile/etc/profile.d/nix.sh
 
 prepare_frontend:
   stage: prepare
