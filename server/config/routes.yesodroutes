@@ -13,7 +13,7 @@
 
 /users UserR GET POST
 
-/login LoginR GET
+/login LoginR POST 
 
 /me MeR GET
 

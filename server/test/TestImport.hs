@@ -130,7 +130,7 @@ login email pass = do
 
   -- send request with correct email and password
   request $ do
-      setMethod "GET"
+      setMethod "POST"
       setUrl LoginR
       setRequestBody encoded
       addRequestHeader ("Content-Type", "application/json")
