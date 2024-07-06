@@ -9,6 +9,7 @@ variables:
 prepare_frontend:
   stage: prepare
   script:
+    - pwd
     - nix develop -c bash -c "make pre-front"
   artifacts:
     paths:
