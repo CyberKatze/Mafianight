@@ -29,7 +29,6 @@ import Language.Haskell.TH.Syntax           (qLocation)
 import Network.HTTP.Client.TLS              (getGlobalManager)
 import Network.Wai (Middleware)
 import Network.Wai.Middleware.Cors (cors, simpleCorsResourcePolicy, CorsResourcePolicy(..))
-
 import Network.Wai.Handler.Warp             (Settings, defaultSettings,
                                              defaultShouldDisplayException,
                                              runSettings, setHost,
@@ -66,7 +65,6 @@ import Handler.Register
 -- starts running, such as database connections. Every handler will have
 -- access to the data present here.
 
-import qualified Data.Text as T (pack) 
 -- | A convenient synonym for creating forms.
 -- This line actually creates our YesodDispatch instance. It is the second half
 -- of the call to mkYesodData which occurs in Foundation.hs. Please see the
@@ -119,10 +117,10 @@ makeApplication foundation = do
     -- Create the WAI application and apply middlewares
 
     let corsPolicy = simpleCorsResourcePolicy
-            { corsOrigins = Nothing 
-            , corsMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-            , corsRequestHeaders = ["Authorization", "Content-Type"]
-            }
+         { corsOrigins = Nothing 
+        , corsMethods = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+        , corsRequestHeaders = ["Authorization", "Content-Type"]
+         }
     appPlain <- toWaiAppPlain foundation
     let appWithCors = cors (const $ Just corsPolicy) appPlain
     return $ logWare $ defaultMiddlewaresNoLogging appWithCors

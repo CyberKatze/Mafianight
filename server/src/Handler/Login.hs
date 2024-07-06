@@ -1,5 +1,6 @@
 {-# LANGUAGE NoImplicitPrelude #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE DeriveGeneric #-}
 module Handler.Login where
 
 import Data.Aeson as Aeson
@@ -10,32 +11,30 @@ import Foundation
 import Model
 import Types ( Token(..), UserAuth(..), Claims(..))
 
+
 postLoginR :: Handler Value
 postLoginR = do
 
     userAuth <- (requireCheckJsonBody :: Handler UserAuth)
     pass <- hashPassword (userAuthPassword userAuth)
 
-    -- Find the user by email
-    maybeUser <- runDB $ 
-      selectOne $ do
-        (user :& email) <- 
-          from $ table @User
-          `innerJoin` table @Email
-          `on` (\(user :& email) -> user ^. UserId ==. email ^. EmailUserId)
-        where_ (email ^. EmailEmail ==. val (userAuthEmail userAuth))
-        pure user
+    -- user <- runDB $ selectFirst [UserUserName ==. (username userAuth), UserPassword ==. Just pass] []
+    user <- runDB(  
+      select $ do
+      (user :& _email) <- 
+        from $ table @User
+        `leftJoin` table @Email
+        `on` (\(user :& _email) -> just (user ^. UserId) ==. _email ?. EmailUserId)
+      where_ ( user ^. UserPassword ==. val pass)
+      pure user
+      )
 
-    case maybeUser of
-      Just (Entity userId user) -> do
-        -- Verify the password by direct comparison
-        if pass== userPassword user
-          then do
-            -- Generate token
-            token <- generateToken userId (Claims { admin = userAdmin user})
-            returnJson Token { bearerToken = token }
-          else do
-            sendStatusJSON status401 $ object [fromString "message" .= "Invalid email or password" ]
-      Nothing -> do
-        sendStatusJSON status401 $ object [fromString "message" .= "Invalid email or password" ]
+    -- generate token
+    case user of
+      [Entity userId user] -> do
+        token <-  generateToken userId (Claims { admin = userAdmin user})
+        returnJson Token { bearerToken = token}
+              
+      _ -> sendStatusJSON status401 $ object [fromString "message" .= ("Invalid username or password" )]
+
 
