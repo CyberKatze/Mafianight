@@ -1,18 +1,20 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import hat from "../assets/images/hat.png"
-import { useState } from 'react';
-
+import hat from "../assets/images/hat.png";
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
+  username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
   confirmPassword: z.string().min(6, { message: 'Password must be at least 6 characters long' })
 });
 const signupSchema = z.object({
   email: z.string().email({ message: 'Invalid email address' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
+  username: z.string().min(3, { message: 'Username must be at least 3 characters long' }),
   confirmPassword: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -31,10 +33,32 @@ const Loginform = () => {
   const formOptions = isSignUp ? { resolver: zodResolver(loginSchema) } : { resolver: zodResolver(signupSchema) };
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>(formOptions);
+  const apiUrl = import.meta.env.VITE_API_URL;
+  console.log('apiUrl:', apiUrl);
 
-
-  const onSubmit = (data: FormData) => {
-    console.log(data);
+  const onSubmit = async (data: FormData) => {
+    try {
+      if (isSignUp) {
+        // Sign-up logic
+        console.log(data.email)
+        const response = await axios.post(apiUrl + '/register', {
+          email: data.email,
+          userName: data.username,
+          password: data.password,
+        });
+        
+        console.log('Sign-up successful:', response.data);
+      } else {
+        // Login logic
+        const response = await axios.post(apiUrl + '/login', {
+          email: data.email,
+          password: data.password,
+        });
+        console.log('Login successful:', response.data);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -62,6 +86,19 @@ const Loginform = () => {
                 />
                 {errors.email && <p className="text-red text-sm mt-1">{errors.email.message}</p>}
               </div>
+              <div>
+  <label htmlFor="username" className="block mb-2 text-sm font-medium text-white">Your username</label>
+  <input
+    type="text"
+    id="username"
+    {...register('username')}
+    className={`border sm:text-sm rounded-lg block w-full p-2.5 bg-slate border-slate placeholder-gray-400 text-white focus:ring-blue-500 focus:border-blue-500 ${errors.username ? 'border-red-500' : ''}`}
+    placeholder="Your username"
+    required
+  />
+  {errors.username && <p className="text-red text-sm mt-1">{errors.username.message}</p>}
+</div>
+
               <div>
                 <label htmlFor="password" className="block mb-2 text-sm font-medium  text-white">Password</label>
                 <input

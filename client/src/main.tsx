@@ -1,15 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './index.css'
-import Root from "./routes/root";
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './error-page.tsx';
+import './index.css';
 import About from './routes/about.tsx';
-import Loginform from './components/Loginform.tsx';
-import Roles from './routes/roles.tsx';
+import Gamesetup from './routes/Gamesetup.tsx';
+import Home from './routes/home.tsx';
+import Loginform from './routes/Loginform.tsx';
 import RoleCards from './routes/rolecards.tsx';
+import Roles from './routes/roles.tsx';
+import Root from "./routes/root";
 import Voting from './routes/voting.tsx';
-import Gamesetup from './components/Gamesetup.tsx';
 
 
 const handleStart = (numberOfPlayers: number, playerNames: string[], roles: { [key: string]: number }) => {
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
     element: <Root />,
     errorElement: <ErrorPage />,
     children: [
+      { path: '/', element: <Home /> },
       {
         path: 'about/',
         element: <About />
@@ -35,7 +37,7 @@ const router = createBrowserRouter([
       { path: 'roles/', element: <Roles /> },
       { path: 'rolecards/', element: <RoleCards /> },
       { path: 'voting/', element: <Voting /> },
-      { path: 'game/', element: <Gamesetup onStart={handleStart}  />},
+      { path: 'gamesetup/', element: <Gamesetup onStart={handleStart}  />},
     ],
   },
 ])

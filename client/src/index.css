@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --hero-background-color-01: hsl(250deg 48.29% 32.64%);
+  --hero-background-color-02: #000000;
+  --main-hue: 250;
+}
+
+.svg-container {
+  background-color: hsl(var(--main-hue), 24%, 12%);
+  background-image: linear-gradient(to bottom, var(--hero-background-color-01), var(--hero-background-color-02));
+}
+
+.svg-container {
+  background: linear-gradient(to bottom, hsl(var(--main-hue), 24%, 12%), hsl(var(--main-hue), 24%, 30%));
+}
+
+
+
