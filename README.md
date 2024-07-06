@@ -1,59 +1,96 @@
-## Setup for system 
+## Setup for System
+1. Install Nix: [installation-guide](https://nixos.org/download/#nix-install-linux)
+2. Install Direnv:
+   ```sh
+   nix-env -i direnv
+   # or
+   nix-env -iA nixpkgs.direnv
+   ```
+3. Ensure Docker Compose is installed.
 
-1. Install nix -> [installation-guide](https://nixos.org/download/#nix-install-linux)
-2. `nix-env -i direnv` 
-3. Add `$HOME/.local/bin` to PATH enviroment variable
-4. Make sure to have docker compose (or docker-compose) installed
-5. Install npm on your machine
+## Development
+1. Go to the project directory:
+   ```sh
+   cd haskell-web
+   ```
+2. Allow Direnv:
+   ```sh
+   direnv allow
+   ```
 
+### Run in Development Mode
+- Clean the project:
+  ```sh
+  make clean
+  ```
+- Prepare both Backend and Frontend:
+  ```sh
+  make
+  ```
+  This runs `make pre-back` and `make pre-front`, so you can skip these in the next sections.
 
-## Develoment
-1. Go to project directory `cd haskell-web`
-2. `direnv allow`
+#### Run Backend
+1. Build and prepare build files:
+   ```sh
+   make pre-back
+   ```
+2. Run Backend:
+   ```sh
+   make dev-back
+   ```
+   > Make sure you are in the root directory of the project.
 
-### Backend
-1. `cd server`
-2. `docker-compose up -d`
-3. **Do it once** -> `stack install yesod-bin --install-ghc`
-4. Build libraries: `stack build`
-5. Start:
-```
-stack exec -- yesod devel 
-# or this
-yesod devel
-```
-### Frontend
-1. Install node modules `npm install`
-2. Run frontend `npm run dev`
+#### Run Frontend
+1. Prepare and install node packages:
+   ```sh
+   make pre-front
+   ```
+2. Run Frontend:
+   ```sh
+   make dev-front
+   ```
+   > Make sure you are in the root directory of the project.
 
 As your code changes, your site will be automatically recompiled and redeployed to localhost.
 
-> If the server got stuck do the `stack build`
+> If the server gets stuck, run `stack build`.
 
-If you have trouble, refer to the [Yesod Quickstart guide](https://www.yesodweb.com/page/quickstart) for additional detail.
-## Tests
+If you have trouble, refer to the [Yesod Quickstart guide](https://www.yesodweb.com/page/quickstart) for additional details.
 
+### Tests
+- Test Backend:
+  ```sh
+  make test-back
+  ```
+- Test Frontend:
+  ```sh
+  make test-front
+  ```
+
+### Makefile Help
+You can use the following command to get help on the make targets:
+```sh
+make help
 ```
-stack test --flag haskell-web:library-only --flag haskell-web:dev
-```
-
-(Because `yesod devel` passes the `library-only` and `dev` flags, matching those flags means you don't need to recompile between tests and development, and it disables optimization to speed up your test compile times).
+This will display descriptions for all the available make targets.
 
 ## Documentation
-
-* Read the [Yesod Book](https://www.yesodweb.com/book) online for free
-* Check [Stackage](http://stackage.org/) for documentation on the packages in your LTS Haskell version, or [search it using Hoogle](https://www.stackage.org/lts/hoogle?q=). Tip: Your LTS version is in your `stack.yaml` file.
-* For local documentation, use:
-	* `stack haddock --open` to generate Haddock documentation for your dependencies, and open that documentation in a browser
-	* `stack hoogle <function, module or type signature>` to generate a Hoogle database and search for your query
-* The [Yesod cookbook](https://github.com/yesodweb/yesod-cookbook) has sample code for various needs
+- Read the [Yesod Book](https://www.yesodweb.com/book) online for free.
+- Check [Stackage](http://stackage.org/) for documentation on the packages in your LTS Haskell version, or [search it using Hoogle](https://www.stackage.org/lts/hoogle?q=). Your LTS version is in your `stack.yaml` file.
+- For local documentation:
+  - Generate and open Haddock documentation:
+    ```sh
+    stack haddock --open
+    ```
+  - Generate a Hoogle database and search for your query:
+    ```sh
+    stack hoogle <function, module or type signature>
+    ```
+- The [Yesod cookbook](https://github.com/yesodweb/yesod-cookbook) has sample code for various needs.
 
 ## Getting Help
-
-* Ask questions on [Stack Overflow, using the Yesod or Haskell tags](https://stackoverflow.com/questions/tagged/yesod+haskell)
-* Ask the [Yesod Google Group](https://groups.google.com/forum/#!forum/yesodweb)
-* There are several chatrooms you can ask for help:
-	* For IRC, try Freenode#yesod and Freenode#haskell
-	* [Functional Programming Slack](https://fpchat-invite.herokuapp.com/), in the #haskell, #haskell-beginners, or #yesod channels.
-
-
+- Ask questions on [Stack Overflow, using the Yesod or Haskell tags](https://stackoverflow.com/questions/tagged/yesod+haskell).
+- Ask the [Yesod Google Group](https://groups.google.com/forum/#!forum/yesodweb).
+- Join chatrooms for help:
+  - For IRC, try Freenode#yesod and Freenode#haskell.
+  - [Functional Programming Slack](https://fpchat-invite.herokuapp.com/), in the #haskell, #haskell-beginners, or #yesod channels.

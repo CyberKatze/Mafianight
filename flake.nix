@@ -28,6 +28,7 @@
               postgresql_15
               pgcli
               playwright-test
+              gnumake
 
       ];
 
@@ -58,18 +59,6 @@
           };
         };
         
-        # can be use for our testing purpuses `nix flake check`
-        checks = {
-          unitTests = pkgs.runCommand "unit-tests" {
-            dontInstall = true;
-            buildInputs = commonPackages pkgs;
-            src = ./.;
-          } ''
-            test $(( 1 + 1 )) -eq  3
-            touch $out
-          '';
-        };
-
         # rec make it recursive and can reuse attributes
         packages = rec {
           # pull the nix docker from dockerhub
