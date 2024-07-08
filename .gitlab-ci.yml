@@ -15,11 +15,51 @@ variables:
   SECRET: $SECRET
   SALT: $SALT
 
-test_backend:
+
+clean:
   stage: setup
   script:
-    - docker compose -f server/docker-compose.yml up -d db-test
-    - echo $YESOD_PGPORT
-    - docker compose -f server/docker-compose.yml ps
-    - nix develop -c bash -c "export YESOD_PGUSER=\$YESOD_PGUSER YESOD_PGPASS=\$YESOD_PGPASS YESOD_PGHOST=\$YESOD_PGHOST YESOD_PGPORT=\$YESOD_PGPORT YESOD_PGPORT_TEST=\$YESOD_PGPORT_TEST YESOD_PGDATABASE=\$YESOD_PGDATABASE YESOD_PGDATABASE_TEST=\$YESOD_PGDATABASE_TEST SECRET=\$SECRET SALT=$SALT && make test-back"
+    - docker compose -f server/docker-compose.yml down -v
+
+prepare_frontend:
+  stage: prepare
+  script:
+    - pwd
+    - nix develop -c bash -c "make pre-front"
+  artifacts:
+    paths:
+      - client/node_modules
+
+prepare_backend:
+  stage: prepare
+  script:
+    - nix develop -c bash -c "make pre-back"
+  artifacts:
+    paths:
+      - server/.stack-work
+
+test_frontend:
+  stage: test
+  dependencies:
+    - prepare_frontend
+  script:
+    - nix develop -c bash -c "make test-front"
+
+test_backend:
+  stage: test
+  dependencies:
+    - prepare_backend
+  script:
+    - docker compose -f server/docker-compose.yml up -d db-test && nix develop -c bash -c 'make ci-test-back'
+
+
+build_backend:
+  stage: build
+  dependencies:
+    - prepare_backend
+  script:
+    - echo "build backend"
+  artifacts:
+    paths:
+      - server/.stack-work
 

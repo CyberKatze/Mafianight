@@ -46,6 +46,7 @@ test-back: ## Runs the backend tests
 	docker compose up -d db-test && \
 	stack test --flag haskell-web:library-only --flag haskell-web:dev
 
+
 help: ## Displays this help message
 	@echo "Usage: make [TARGET]"
 	@echo ""
@@ -53,3 +54,8 @@ help: ## Displays this help message
 	@awk 'BEGIN {FS = ":.*?## "}; /^[a-zA-Z_-]+:.*?## / { printf "  %-20s %s\n", $$1, $$2 }' $(MAKEFILE_LIST)
 
 .PHONY: help
+
+ci-test-back: ## Runs the backend tests on CI
+	cd $(BACKEND_DIR) && \
+	stack test
+
