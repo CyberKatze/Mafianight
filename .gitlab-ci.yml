@@ -1,8 +1,7 @@
 stages:
-  - setup
-  - prepare
   - test
   - build
+  - deploy
 
 variables:
   YESOD_PGUSER: $YESOD_PGUSER
@@ -16,50 +15,49 @@ variables:
   SALT: $SALT
 
 
-clean:
-  stage: setup
+test_frontend:
+  stage: test
   script:
-    - docker compose -f server/docker-compose.yml down -v
-
-prepare_frontend:
-  stage: prepare
-  script:
-    - pwd
     - nix develop -c bash -c "make pre-front"
-  artifacts:
+    - nix develop -c bash -c "make test-front"
+  cache:
+    key:
+      files: 
+        - client/pnpm-lock.yaml
     paths:
       - client/node_modules
 
-prepare_backend:
-  stage: prepare
+test_backend:
+  stage: test
   script:
-    - nix develop -c bash -c "make pre-back"
-  artifacts:
+    - docker compose up -d db-test
+    - YESOD_PGHOST=localhost nix develop -c bash -c "make ci-test-back"
+  cache:
+    key:
+      files:
+        - server/package.yaml
     paths:
       - server/.stack-work
 
-test_frontend:
-  stage: test
-  dependencies:
-    - prepare_frontend
+build_frontend:
+  stage: build
   script:
-    - nix develop -c bash -c "make test-front"
-
-test_backend:
-  stage: test
-  dependencies:
-    - prepare_backend
-  script:
-    - docker compose -f server/docker-compose.yml up -d db-test && nix develop -c bash -c 'make ci-test-back'
-
+    - nix develop -c bash -c "make ci-build-front"
+  artifacts:
+    paths:
+      - client/dist
 
 build_backend:
   stage: build
   dependencies:
-    - prepare_backend
+    - test_backend
   script:
-    - echo "build backend"
+    - nix develop -c bash -c "make ci-build-back"
   artifacts:
     paths:
-      - server/.stack-work
+      - backendImage
 
+deploy_backend:
+  stage: deploy
+  script:
+    - nix develop -c bash -c "make ci-deploy-back"

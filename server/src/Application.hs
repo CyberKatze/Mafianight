@@ -186,6 +186,7 @@ appMain = do
     -- Generate the foundation from the settings
     foundation <- makeFoundation settings
 
+    runSqlPool (loadSeedData) (appConnPool foundation)
     -- Generate a WAI Application from the foundation
     app <- makeApplication foundation
 

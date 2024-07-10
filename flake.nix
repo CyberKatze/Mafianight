@@ -61,43 +61,36 @@
 
         # rec make it recursive and can reuse attributes
         packages = rec {
-          # pull the nix docker from dockerhub
-          # flakeImage = pkgs.dockerTools.pullImage {
-          #   imageName = "nixpkgs/nix-flakes";
-          #   imageDigest = "sha256:653ac11d23bbe5b9693f156cafeb97c7e8000b187d1bafec3798f6c92238fde2";
-          #   sha256 = "15543hvgw2g8aadkx335pprrxq3ldcv93a9qq9c4am0rbkw8prrw";
-          #   finalImageName = "nixpkgs/nix-flakes";
-          #   finalImageTag = "nixos-21.11";
-          # };
 
           backend = pkgs.haskell.lib.buildStackProject {
-            name = "backend";
-            src = ./server;
-            ghc = pkgs.haskell.compiler.ghc92;
-            buildInputs = [
-              stack-wrapped
-              pkgs.postgresql_15
-              pkgs.zlib
-            ];
-          };
-          # use the nixFromDockerHub and add commonPackages to it
-          backendImage = pkgs.dockerTools.buildImageWithNixDb {
+                  name = "backend";
+                  src = ./server;
+                  doCheck = false;
+                  ghc = pkgs.haskell.compiler.ghc92;
+                  buildInputs = [
+                  stack-wrapped
+                  pkgs.postgresql_15
+                  pkgs.zlib
+                  ];
+                };
+          # Wrap the backend binary in docker image  
+          backendImage = pkgs.dockerTools.buildImage {
             name = "backend";
             tag = "0.1.0";
             runAsRoot = ''
-              mkdir /app
-              cp -r ${./.} /app
-            '';
+              mkdir -p /app/seeds
+              cp  ${./server/seeds/roles.json} /app/seeds/roles.json
+              '';
             copyToRoot = pkgs.buildEnv {
-              name = "image-root";
-              paths = [
-                backend
-                pkgs.bashInteractive
-              ];
-              pathsToLink = [ "/bin" ];
+            name = "image-root";
+            paths = [
+             backend
+            ] ; 
+            pathsToLink = [ "/bin" ];
             };
-            config = {
-              CMD = [ "/bin/bash" ];
+            config = { 
+              WorkingDir = "/app";
+              CMD = [ "haskell-web" ];
             };
 
           };

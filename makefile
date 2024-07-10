@@ -55,7 +55,20 @@ help: ## Displays this help message
 
 .PHONY: help
 
+.PHONY: ci-build-front ci-build-back ci-deploy-back ci-test-front ci-test-back
+
 ci-test-back: ## Runs the backend tests on CI
 	cd $(BACKEND_DIR) && \
 	stack test
 
+ci-build-front: ## Builds the frontend on CI
+	cd $(FRONTEND_DIR) && \
+	$(PNPM_RUN_BUILD)
+
+ci-build-back: ## Builds the backend on CI
+	nix build .#backendImage -o backendImage && \
+	docker load < backendImage 
+
+ci-deploy-back: ## deploys the backend on CI
+	docker compose -f server/docker-compose.yml down -v && \
+	docker compose -f server/docker-compose.yml up -d app

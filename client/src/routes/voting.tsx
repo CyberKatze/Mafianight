@@ -104,6 +104,8 @@ const Voting: React.FC = () => {
     const handleSelectionChange = (isChecked: boolean, playerId: number, selectedId: number) => {
         const newSelectedIds = [...selectedIds];
         if (selectedId === null) {
+            // just for using it
+            console.log(playerId);
             return; // Handle potential null case (no selection)
         }
         else if(isChecked && !selectedIds.includes(selectedId)){

@@ -66,6 +66,6 @@ packages:
 nix:
   pure: false 
   enable: true
-  packages: [postgresql zlib]
+  packages: [postgresql zlib glpk pcre ]
 
 notify-if-nix-on-path: false

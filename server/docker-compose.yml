@@ -2,10 +2,17 @@ services:
   db:
     image: postgres:15.7
     container_name: db
+    networks:
+      - mafia_network
     environment:
       POSTGRES_USER: ${YESOD_PGUSER}
       POSTGRES_PASSWORD: ${YESOD_PGPASS}
       POSTGRES_DB: ${YESOD_PGDATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${YESOD_PGUSER} -d ${YESOD_PGDATABASE}"]
+      interval: 5s
+      timeout: 2s
+      retries: 3
     ports:
       - "${YESOD_PGPORT}:5432"
     volumes:
@@ -19,6 +26,29 @@ services:
       POSTGRES_DB: ${YESOD_PGDATABASE_TEST}
     ports:
       - "${YESOD_PGPORT_TEST}:5432"
+  app:
+    image: backend:0.1.0
+    container_name: backend
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      YESOD_PGUSER: ${YESOD_PGUSER}
+      YESOD_PGPASS: ${YESOD_PGPASS}
+      YESOD_PGHOST: ${YESOD_PGHOST}
+      YESOD_PGPORT: ${YESOD_PGPORT}
+      YESOD_PGDATABASE: ${YESOD_PGDATABASE}
+      SECRET: ${SECRET}
+      SALT: ${SALT}
+    ports: 
+      - "3000:3000"
+
+    networks:
+      - mafia_network
+
+networks:
+  mafia_network:
+    driver: bridge
 volumes:
   postgres_data:
     driver: local
