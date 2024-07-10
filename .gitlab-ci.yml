@@ -19,23 +19,17 @@ test_frontend:
   stage: test
   script:
     - nix develop -c bash -c "make pre-front"
-    - nix develop -c bash -c "make test-front"
-  cache:
-    key:
-      files: 
-        - client/pnpm-lock.yaml
+    - nix develop -c bash -c "make ci-test-unit-front"
+  artifacts:
     paths:
       - client/node_modules
 
 test_backend:
   stage: test
   script:
-    - docker compose up -d db-test
+    - docker compose -f ./server/docker-compose.yml up -d db-test
     - YESOD_PGHOST=localhost nix develop -c bash -c "make ci-test-back"
-  cache:
-    key:
-      files:
-        - server/package.yaml
+  artifacts:
     paths:
       - server/.stack-work
 
@@ -61,3 +55,7 @@ deploy_backend:
   stage: deploy
   script:
     - nix develop -c bash -c "make ci-deploy-back"
+deploy_front:
+  stage: deploy
+  script:
+    - nix develop -c bash -c "make ci-deploy-front"

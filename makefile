@@ -55,7 +55,13 @@ help: ## Displays this help message
 
 .PHONY: help
 
-.PHONY: ci-build-front ci-build-back ci-deploy-back ci-test-front ci-test-back
+.PHONY: ci-test-back ci-build-front ci-build-back ci-deploy-back
+
+ci-test-unit-front: ## Runs the frontend unit tests on CI
+	cd $(FRONTEND_DIR) && $(PNPM_TEST) --project=unit
+
+ci-test-e2e-front: ## Runs the frontend end-to-end tests on CI
+	cd $(FRONTEND_DIR) && $(PNPM_TEST) --project=e2e
 
 ci-test-back: ## Runs the backend tests on CI
 	cd $(BACKEND_DIR) && \
