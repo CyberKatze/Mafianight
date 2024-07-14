@@ -21,7 +21,7 @@ Role json
   deriving Show
 
 Game json
-  currentTurn TurnId  Maybe
+  currentTurn TurnId Maybe
   name Text
   userId UserId
   deriving Eq
@@ -31,7 +31,7 @@ Player json
   name Text
   alive Bool
   gameId GameId
-  roleId RoleId
+  roleId RoleId Maybe
   deriving Eq
   deriving Show
 

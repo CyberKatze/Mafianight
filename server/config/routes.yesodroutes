@@ -9,6 +9,8 @@
 
 /games GameR GET POST
 
+/game/#Int64 GameIdR GET
+
 /turns TurnR GET POST
 
 /users UserR GET POST

@@ -63,7 +63,6 @@ instance Yesod App where
     errorHandler (InvalidArgs _) = toTypedContent <$> custom403 "Invalid arguments"
     errorHandler (BadMethod _) = toTypedContent <$> custom403 "Invalid method"
     errorHandler (InternalError e) = toTypedContent <$> custom403 e
-    errorHandler other = defaultErrorHandler other
 
     isAuthorized RoleR _ = return Authorized
     isAuthorized GameR _ = isUser
@@ -71,6 +70,7 @@ instance Yesod App where
     isAuthorized TurnR _ = isUser
     isAuthorized EventR _ = isUser
     isAuthorized PlayerR _ = isUser
+    isAuthorized (GameIdR _) _ = isUser
     isAuthorized MeR _ = isUser
     isAuthorized LoginR _ = return Authorized
     isAuthorized RegisterR _ = return Authorized

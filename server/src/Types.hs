@@ -14,7 +14,8 @@ module Types (
   , UserAuth(..)
   , UserRegister(..)
   , GameRegister(..)
-  , GameInfo(..))
+  , GameInfo(..)
+  , PlayerInfo(..))
 where
 import ClassyPrelude.Yesod 
 import Data.Aeson.TH
@@ -85,8 +86,20 @@ instance FromJSON UserRegister where
 instance ToJSON UserRegister  where
   toJSON = genericToJSON  $ customOptions "userRegister"
 
+data PlayerInfo = PlayerInfo
+  { playerInfoName :: Text
+  , playerInfoAlive :: Bool
+  , playerInfoRole :: Text  
+  } deriving (Show, Generic)
+
+instance FromJSON PlayerInfo where
+  parseJSON = genericParseJSON $ customOptions "playerInfo"
+instance ToJSON PlayerInfo  where
+  toJSON = genericToJSON  $ customOptions "playerInfo"
+
 data GameRegister = GameRegister
   { gameRegisterName :: Text
+  , gameRegisterPlayers :: Maybe [PlayerInfo]
   } deriving (Show, Generic)
 
 instance FromJSON GameRegister where
@@ -97,6 +110,7 @@ instance ToJSON GameRegister  where
 data GameInfo = GameInfo
   { gameInfoId :: Int64
   , gameInfoName :: Text
+  , gameInfoPlayers :: Maybe [PlayerInfo]
   } deriving (Show, Generic)
 
 instance FromJSON GameInfo where

@@ -78,19 +78,63 @@ spec = withApp $ do
                           
       statusIs 200
     it "asserts unauthenticated 403" $ do
-        user <- createUser "email.com" "user" "123" False
-        _game <- createGame "sampleGame" (entityKey user)
-        -- sent a get request
-        request $ do
-            setMethod "GET"
-            setUrl GameR
-            addRequestHeader ("Content-Type", "application/json")
+      user <- createUser "email.com" "user" "123" False
+      _game <- createGame "sampleGame" (entityKey user)
+      -- sent a get request
+      request $ do
+          setMethod "GET"
+          setUrl GameR
+          addRequestHeader ("Content-Type", "application/json")
  
-        mResponse <- getResponse
-        case mResponse of
-            Nothing -> error "No response"
-            Just response -> do
-              case decode (simpleBody response) of
-                Just (ErrorResp {message = msg}) -> assertEq "Should have " msg "User not authenticated"
-                _ -> error "Invalid response"
-        statusIs 403
+      mResponse <- getResponse
+      case mResponse of
+          Nothing -> error "No response"
+          Just response -> do
+            case decode (simpleBody response) of
+              Just (ErrorResp {message = msg}) -> assertEq "Should have " msg "User not authenticated"
+              _ -> error "Invalid response"
+      statusIs 403
+    it "asserts get game by id" $ do
+      -- create a user
+      user <- createUser "email.com" "user" "123" False
+      game <- createGame "sampleGame" (entityKey user)
+
+      mtoken <- login "email.com" "123"
+
+      -- register a game with players
+      let name = "game" :: Text
+          playersObj =  [ object [ "name" .= ("player1" :: Text) , "alive" .= True, "role" .= ("mafia" :: Text) ]
+                , object [ "name" .= ("player2" :: Text), "alive" .= True, "role" .= ("villager" :: Text) ]
+                ]
+          gameObj = object [ "name" .= name, "players" .= playersObj ]
+          encoded = encode gameObj
+
+      case mtoken of
+        Nothing -> error "Invalid token"
+        Just (Token {bearerToken = token}) -> do
+          request $ do
+            setMethod "POST"
+            setUrl GameR
+            setRequestBody encoded
+            addRequestHeader ("Content-Type", "application/json")
+            addRequestHeader ("Authorization", "Bearer " <> encodeUtf8(token))
+
+          mGame <- runMaybeT $ fetchDecodedBody @GameInfo
+
+          case mGame of
+            Nothing -> error "Invalid game"
+            Just (GameInfo {gameInfoId = gameId}) -> do
+
+              request $ do
+                setMethod "GET"
+                setUrl $ GameIdR gameId
+                addRequestHeader ("Content-Type", "application/json")
+                addRequestHeader ("Authorization", "Bearer " <> encodeUtf8(token))
+              mGameBack <- runMaybeT $ fetchDecodedBody @GameInfo
+              -- assert the response
+              case mGameBack of
+                Nothing -> error "Invalid game"
+                Just (GameInfo {gameInfoId = gameIdBack, gameInfoPlayers = players}) -> do
+                  assertEq "Should have " gameId gameIdBack
+                  -- should exist 2 players
+                  assertEq "Should have " 2 (maybe 0 length players)
