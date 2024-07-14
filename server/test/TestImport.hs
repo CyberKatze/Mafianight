@@ -133,11 +133,12 @@ login email pass = do
   
   (maybe Nothing ((maybe Nothing id) . (decode) . simpleBody) ) <$> getResponse
 
-createGame :: Text -> YesodExample App (Entity Game)
-createGame name = runDB $ do
+createGame :: Text -> UserId -> YesodExample App (Entity Game)
+createGame name userId = runDB $ do
     game <- insertEntity Game
         { gameName = name
         , gameCurrentTurn = Nothing
+        , gameUserId = userId
         }
     return game
 

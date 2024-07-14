@@ -23,6 +23,7 @@ Role json
 Game json
   currentTurn TurnId  Maybe
   name Text
+  userId UserId
   deriving Eq
   deriving Show
 

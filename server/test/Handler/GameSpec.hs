@@ -18,7 +18,7 @@ spec = withApp $ do
       let email = "user@exammple.com"
           pass = "securepass"
       -- create a user
-      _ <- createUser email "user" pass False
+      user <- createUser email "user" pass False
       -- login the user
  
       mtoken <- login email pass
@@ -37,17 +37,28 @@ spec = withApp $ do
       game <-  case games of
         [ent] -> pure ent
         _ -> error "needed 1 entity"
-      assertEq "Should have " (gameName $ entityVal game) name
+
+      assertEq "Should have name " (gameName $ entityVal game) name
+      assertEq "Should have game Turn " (gameCurrentTurn $ entityVal game) Nothing
+      assertEq "Should have userId " (gameUserId $ entityVal  game) (entityKey user)
       statusIs 200
  
     it "asserts game Get request" $ do
-      game <- createGame "sampleGame"
 
       let email = "user@exammple.com"
           pass = "securepass"
+          userName = "user"
       -- create a user
-      _ <- createUser email "user" pass False
+      user <- createUser email userName pass False
+
+      let email2 = "user2@exammple.com"
+          pass2 = "securepass2"
+          userName2 = "user2"
+      -- create a user
+      user2 <- createUser email2 userName2 pass2 False
       -- login the user
+      game <- createGame "sampleGame" (entityKey user)
+      _game2 <- createGame "sampleGame2" (entityKey user2)
       mtoken <- login email pass
 
       case mtoken of
@@ -60,13 +71,15 @@ spec = withApp $ do
              addRequestHeader ("Authorization", "Bearer " <> encodeUtf8(token))
 
       mResponse <- getResponse
+      -- It should only return the game created by the user
       case mResponse of
           Nothing -> error "No response"
           Just response -> assertEq "Should have " (simpleBody response) (encode [game])
                           
       statusIs 200
     it "asserts unauthenticated 403" $ do
-        _ <- createGame "sampleGame"
+        user <- createUser "email.com" "user" "123" False
+        _game <- createGame "sampleGame" (entityKey user)
         -- sent a get request
         request $ do
             setMethod "GET"
