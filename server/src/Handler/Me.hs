@@ -9,7 +9,7 @@ import Database.Esqueleto.Experimental hiding (Value)
 import ClassyPrelude.Yesod  hiding ((==.), on)
 import Foundation
 import Model
-import Types (Claims(..), Token(..), UserInfo(..))
+import Types ( UserInfo(..))
 import Yesod.Auth (maybeAuthId)
 
 
@@ -20,21 +20,18 @@ getMeR = do
     case maid of
       Nothing -> sendStatusJSON status403 $ object [fromString "message" .= ("User must login" )]
       Just userId -> do
-        -- user <- runDB $ selectFirst [UserUserName ==. (username userAuth), UserPassword ==. Just pass] []
-        userEmail <- runDB(  
+        users <- runDB(  
           select $ do
-          (user :& email) <- 
+          (user) <- 
             from $ table @User
-            `innerJoin` table @Email
-            `on` (\(user :& email) -> user ^. UserId ==. email ^. EmailUserId)
           where_ ( user ^. UserId ==. val userId)
-          pure (user, email)
+          pure (user)
           )
 
         -- -- generate token
-        case userEmail of
-          [(Entity _ user, Entity _ email)] -> do
-            returnJson UserInfo { userInfoEmail = emailEmail email, userInfoUserName = userUserName user, userInfoAdmin = userAdmin user}
+        case users of
+          [Entity _ user] -> do
+            returnJson UserInfo { userInfoEmail = userEmail user, userInfoUserName = userUserName user, userInfoAdmin = userAdmin user}
                   
                   
           _ -> sendStatusJSON status401 $ object [fromString "message" .= ("Invalid username or password" )]

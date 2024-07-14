@@ -30,7 +30,6 @@ import Yesod.Auth.Util.PasswordStore (makePasswordSalt, makeSalt)
 -- access to the data present here.
 data App = App
     { appSettings    :: AppSettings
-    , appStatic      :: Static -- ^ Settings for static file serving.
     , appConnPool    :: ConnectionPool -- ^ Database connection pool.
     , appHttpManager :: Manager
     , appLogger      :: Logger

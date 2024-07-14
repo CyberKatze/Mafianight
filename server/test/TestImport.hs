@@ -115,11 +115,7 @@ createUser email userName pass admin = do
           { userUserName = userName
           , userPassword = pass
           , userAdmin = admin
-          }
-      _ <- insert Email
-          { emailEmail = email
-          , emailUserId = entityKey user
-          , emailVerkey = Nothing
+          , userEmail = email
           }
       return user
 

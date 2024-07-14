@@ -6,7 +6,7 @@ module Handler.Register where
 import Data.Aeson as Aeson
 import Data.Aeson.Key ()
 import Database.Esqueleto.Experimental hiding (Value)
-import ClassyPrelude.Yesod  hiding ((==.), on)
+import ClassyPrelude.Yesod  hiding ((==.), on, (||.))
 import Foundation
 import Model
 import Types ( Token(..), UserRegister(..), Claims(..))
@@ -23,29 +23,16 @@ postRegisterR = do
       select $ do
       user <- 
         from $ table @User
-      where_ ( user ^. UserUserName ==. val (userRegisterUserName userRegister))
+      where_ ( user ^. UserUserName ==. val (userRegisterUserName userRegister) ||. user ^. UserEmail ==. val (userRegisterEmail userRegister))
       pure user
-      )
-    -- check if the email is already registered
-    email <- runDB(  
-      select $ do
-      email <- 
-        from $ table @Email
-      where_ ( email ^. EmailEmail ==. val (userRegisterEmail userRegister))
-      pure email
       )
 
     -- generate token
     case user of
-      [Entity userId user] -> sendStatusJSON status409 $ object [fromString "message" .= ("username is already registers" )]
+      [Entity _userId _user] -> sendStatusJSON status409 $ object [fromString "message" .= ("username is already registers" )]
       _ -> do
-        case email of
-          [Entity emailId email] -> sendStatusJSON status409 $ object [fromString "message" .= ("email is already registers" )]
-          _ -> do
-            
-            userId <- runDB $ insert $ User (userRegisterUserName userRegister) pass False
-            _ <- runDB $ insert $ Email (userRegisterEmail userRegister) userId Nothing
+        userId <- runDB $ insert $ User (userRegisterUserName userRegister) pass False (userRegisterEmail userRegister)
 
-            token <-  generateToken userId (Claims { admin = False})
-            returnJson Token { bearerToken = token}
+        token <-  generateToken userId (Claims { admin = False})
+        returnJson Token { bearerToken = token}
               

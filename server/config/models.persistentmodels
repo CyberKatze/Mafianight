@@ -5,15 +5,10 @@ User json
   userName Text
   password Text 
   admin Bool
-  UniqueUser userName
-  deriving Typeable
-  deriving Show
-
-Email json -- Adding "json" causes ToJSON and FromJSON instances to be derived.
   email Text
-  userId UserId
-  verkey Text Maybe
+  UniqueUser userName
   UniqueEmail email
+  deriving Typeable
   deriving Show
 
 Role json

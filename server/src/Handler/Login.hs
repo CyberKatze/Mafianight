@@ -18,19 +18,16 @@ postLoginR = do
     userAuth <- (requireCheckJsonBody :: Handler UserAuth)
     pass <- hashPassword (userAuthPassword userAuth)
 
-    -- user <- runDB $ selectFirst [UserUserName ==. (username userAuth), UserPassword ==. Just pass] []
-    user <- runDB(  
+    users <- runDB(  
       select $ do
-      (user :& _email) <- 
+      user <- 
         from $ table @User
-        `leftJoin` table @Email
-        `on` (\(user :& _email) -> just (user ^. UserId) ==. _email ?. EmailUserId)
-      where_ ( user ^. UserPassword ==. val pass)
+      where_ ( user ^. UserEmail ==. val(userAuthEmail userAuth) &&. user ^. UserPassword ==. val pass)
       pure user
       )
 
     -- generate token
-    case user of
+    case users of
       [Entity userId user] -> do
         token <-  generateToken userId (Claims { admin = userAdmin user})
         returnJson Token { bearerToken = token}
