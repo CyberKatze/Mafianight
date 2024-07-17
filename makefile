@@ -71,9 +71,18 @@ ci-build-front: ## Builds the frontend on CI
 	cd $(FRONTEND_DIR) && \
 	$(PNPM_RUN_BUILD)
 
+
 ci-build-back: ## Builds the backend on CI
 	nix build .#backendImage -o backendImage && \
 	docker load < backendImage 
+
+push-docker-back: ## Pushes the backend image to Registery
+	docker login https://registery.mafianight.me && \
+	docker tag backend:latest registery.mafianight.me/backend:$(VERSION) && \
+	docker tag backend:latest registery.mafianight.me/backend:latest && \
+	docker push registery.mafianight.me/backend:$(VERSION) && \
+	docker push registery.mafianight.me/backend:latest
+
 
 ci-deploy-back: ## deploys the backend on CI
 	docker compose -f server/docker-compose.yml down -v && \

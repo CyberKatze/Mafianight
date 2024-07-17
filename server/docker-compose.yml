@@ -27,7 +27,7 @@ services:
     ports:
       - "${YESOD_PGPORT_TEST}:5432"
   app:
-    image: backend:0.1.0
+    image: registery.mafianight.me/backend:0.1.0
     container_name: backend
     depends_on:
       db:

@@ -76,7 +76,7 @@
           # Wrap the backend binary in docker image  
           backendImage = pkgs.dockerTools.buildImage {
             name = "backend";
-            tag = "0.1.0";
+            tag = "latest";
             runAsRoot = ''
               mkdir -p /app/seeds
               cp  ${./server/seeds/roles.json} /app/seeds/roles.json

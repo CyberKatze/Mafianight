@@ -41,20 +41,11 @@ build_frontend:
     paths:
       - client/dist
 
-build_backend:
-  stage: build
-  dependencies:
-    - test_backend
-  script:
-    - nix develop -c bash -c "make ci-build-back"
-  artifacts:
-    paths:
-      - backendImage
-
 deploy_backend:
   stage: deploy
   script:
     - nix develop -c bash -c "make ci-deploy-back"
+    
 deploy_front:
   stage: deploy
   script:
