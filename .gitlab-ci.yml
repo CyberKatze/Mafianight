@@ -14,7 +14,6 @@ variables:
   SECRET: $SECRET
   SALT: $SALT
 
-
 test_frontend:
   stage: test
   script:
@@ -35,6 +34,8 @@ test_backend:
 
 build_frontend:
   stage: build
+  dependencies:
+    - test_frontend
   script:
     - nix develop -c bash -c "make ci-build-front"
   artifacts:
@@ -43,10 +44,14 @@ build_frontend:
 
 deploy_backend:
   stage: deploy
+  dependencies:
+    - test_backend
   script:
     - nix develop -c bash -c "make ci-deploy-back"
     
-deploy_front:
+deploy_frontend:
   stage: deploy
+  dependencies:
+    - build_frontend
   script:
     - nix develop -c bash -c "make ci-deploy-front"

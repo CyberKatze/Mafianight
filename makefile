@@ -1,6 +1,7 @@
 # Variables
 FRONTEND_DIR = client
 BACKEND_DIR = server
+REG_URL = registery.mafianight.me
 
 # Frontend commands
 PNPM_RUN_BUILD = pnpm run build
@@ -77,13 +78,16 @@ ci-build-back: ## Builds the backend on CI
 	docker load < backendImage 
 
 push-docker-back: ## Pushes the backend image to Registery
-	docker login https://registery.mafianight.me && \
-	docker tag backend:latest registery.mafianight.me/backend:$(VERSION) && \
-	docker tag backend:latest registery.mafianight.me/backend:latest && \
-	docker push registery.mafianight.me/backend:$(VERSION) && \
-	docker push registery.mafianight.me/backend:latest
+	docker login $(REG_URL) && \
+	docker tag backend:latest $(REG_URL)/backend:$(VERSION) && \
+	docker tag backend:latest $(REG_URL)/backend:latest && \
+	docker push $(REG_URL)/backend:$(VERSION) && \
+	docker push $(REG_URL)/backend:latest
 
 
 ci-deploy-back: ## deploys the backend on CI
 	docker compose -f server/docker-compose.yml down -v && \
 	docker compose -f server/docker-compose.yml up -d app
+	
+ci-deploy-front: ## deploys the front on CI
+	rsync -avz --delete $(FRONTEND_DIR)/dist/ /var/www/mafianight.me
