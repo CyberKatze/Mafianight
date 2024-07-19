@@ -70,7 +70,7 @@ ci-test-back: ## Runs the backend tests on CI
 
 ci-build-front: ## Builds the frontend on CI
 	cd $(FRONTEND_DIR) && \
-	$(PNPM_RUN_BUILD)
+	VITE_API_URL=$(VITE_API_URL) $(PNPM_RUN_BUILD)
 
 
 ci-build-back: ## Builds the backend on CI
