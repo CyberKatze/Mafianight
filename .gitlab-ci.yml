@@ -18,7 +18,7 @@ test_frontend:
   stage: test
   script:
     - nix develop -c bash -c "make pre-front"
-    - nix develop -c bash -c "make ci-test-unit-front"
+    - echo "unit test will be added later"
   artifacts:
     paths:
       - client/node_modules

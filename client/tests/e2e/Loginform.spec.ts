@@ -2,7 +2,7 @@ import { test } from '@playwright/test';
 
 test('test', async ({ page }) => {
   await page.pause();
-  await page.goto('http://localhost:5174/');
+  await page.goto('http://localhost:3001/');
   await page.getByRole('link', { name: 'Log in' }).click();
   await page.getByRole('link', { name: 'Sign up' }).click();
   await page.getByPlaceholder('name@.com').click();

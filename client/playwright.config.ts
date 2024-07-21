@@ -1,6 +1,11 @@
 import { defineConfig, devices } from '@playwright/test';
+import path from 'path';  
+
 
 export default defineConfig({
+  /* Global setup and teardown */
+  globalSetup: path.resolve('./tests/global-setup.ts'),
+  globalTeardown: path.resolve('./tests/global-teardown.ts'),
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -33,5 +38,6 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
+
 
 });

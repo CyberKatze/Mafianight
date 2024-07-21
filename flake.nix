@@ -29,7 +29,7 @@
           pgcli
           playwright-test
           gnumake
-
+          lsof
         ];
 
         stack-wrapped = pkgs.symlinkJoin {

@@ -15,7 +15,7 @@ STACK_DEV = yesod devel
 STACK_RUN = stack exec haskell-web
 
 # Targets
-.PHONY: all build-front build-back clean dev-front dev-back run-db test-front test-back help
+.PHONY: all build-front build-back clean dev-front dev-back test-front test-back help
 
 all: pre-front pre-back ## Prepares both frontend and backend
 
@@ -36,7 +36,7 @@ clean: ## Cleans up generated files and stops Docker containers
 dev-front: ## Runs the frontend in development mode
 	cd $(FRONTEND_DIR) && $(PNPM_DEV)
 
-dev-back: run-db ## Runs the backend in development mode
+dev-back: ## Runs the backend in development mode
 	cd $(BACKEND_DIR) && docker compose up -d db && $(STACK_DEV)
 
 test-front: ## Runs the frontend tests
