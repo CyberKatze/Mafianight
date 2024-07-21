@@ -7,7 +7,7 @@ export default async function globalTeardown() {
   try {  
     // Stop backend  
     console.log('Stopping backend...');  
-    await execAsync('pkill -f "make dev-back"');  
+    await execAsync('pkill -f "haskell-web"');  
 
     // Stop and clear database  
     console.log('Stopping database...');  
