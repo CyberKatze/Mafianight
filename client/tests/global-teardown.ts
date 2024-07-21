@@ -15,7 +15,6 @@ export default async function globalTeardown() {
 
     // Stop frontend  
     console.log('Stopping frontend...');  
-    await execAsync('pkill -f "make dev-front"');  
 
   } catch (error) {  
     console.error('Error during teardown:', error.message);  
