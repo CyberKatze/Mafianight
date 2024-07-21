@@ -87,7 +87,7 @@ push-docker-back: ## Pushes the backend image to Registery
 
 ci-deploy-back: ## deploys the backend on CI
 	docker compose -f server/docker-compose.yml down -v && \
-	docker compose -f server/docker-compose.yml up -d app
+	docker compose -f server/docker-compose.yml pull app && docker compose -f server/docker-compose.yml up -d app 
 	
 ci-deploy-front: ## deploys the front on CI
 	rsync -avz --delete $(FRONTEND_DIR)/dist/ /var/www/mafianight.me
