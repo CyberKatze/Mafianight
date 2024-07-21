@@ -16,11 +16,23 @@ async function waitForService(url, timeout = 30000) {
   throw new Error(`Service at ${url} did not start within ${timeout / 1000} seconds`);  
 }
 
+function logOutput(childProcess, name) {  
+  childProcess.stdout.setEncoding('utf8');  
+  childProcess.stdout.on('data', (data) => {  
+    console.log(`[${name} stdout]:`, data.toString());  
+  });  
+
+  childProcess.stderr.setEncoding('utf8');  
+  childProcess.stderr.on('data', (data) => {  
+    console.error(`[${name} stderr]:`, data.toString());  
+  });  
+}
 export default async function globalSetup() {  
   // Start backend  
-  spawn('make',[''], { cwd: '../', detached: false, stdio: ['ignore', 'pipe', 'pipe'] });
+  const make=spawn('make',[''], { cwd: '../', detached: false, stdio: ['ignore', 'pipe', 'pipe'] });
   console.log('Starting backend...');  
-  spawn('make',['dev-back'], { cwd: '../', detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
+  const back=spawn('make',['dev-back'], { cwd: '../', detached: false, stdio: ['ignore', 'pipe', 'pipe'] });
+  // logOutput(back,'backend')
 
   // Wait for backend to be ready  
   console.log('Waiting for backend to be ready...');  
@@ -28,7 +40,7 @@ export default async function globalSetup() {
 
   // Start frontend  
   console.log('Starting frontend...');  
-  spawn('make',['dev-front'], { cwd: '../', detached: true, stdio: ['ignore', 'pipe', 'pipe'] });
+  spawn('make',['dev-front'], { cwd: '../', detached: false, stdio: ['ignore', 'pipe', 'pipe'] });
 
   // Wait for frontend to be ready  
   console.log('Waiting for frontend to be ready...');  

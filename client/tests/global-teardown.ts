@@ -1,19 +1,22 @@
-import { execSync } from 'child_process';  
+import { exec } from 'child_process';  
+import { promisify } from 'util';  
 
-export default function globalTeardown() {  
+const execAsync = promisify(exec);  
+
+export default async function globalTeardown() {  
   try {  
     // Stop backend  
     console.log('Stopping backend...');  
-    execSync(`lsof -t -i:3000 | xargs kill -9`, { stdio: 'pipe' });  
-    // Stop and clear database
+    await execAsync('pkill -f "make dev-back"');  
+
+    // Stop and clear database  
     console.log('Stopping database...');  
-    execSync('docker compose down -v', { cwd: '../server', stdio: 'inherit' });  
+    await execAsync('docker compose down -v', { cwd: '../server' });  
 
     // Stop frontend  
     console.log('Stopping frontend...');  
-    execSync(`lsof -t -i:3001 | xargs kill -9`, { stdio: 'pipe' });  
+    await execAsync('pkill -f "make dev-front"');  
 
-    console.log('Teardown completed.');  
   } catch (error) {  
     console.error('Error during teardown:', error.message);  
   }  
