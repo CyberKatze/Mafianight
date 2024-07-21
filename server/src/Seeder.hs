@@ -23,7 +23,7 @@ loadSeedData  = do
         Just roles ->  do
           -- upsert each role
           forM_ roles $ \r -> do
-              _ <- upsert r [RoleName =. roleName r]
+              _ <- upsert r [RoleName =. roleName r, RoleDesc =. roleDesc r, RoleAvatar =. roleAvatar r, RoleMafia =. roleMafia r]
               return ()
         Nothing -> liftIO $ putStrLn $ "Failed to parse " ++ pack rolePath
 
