@@ -7,12 +7,17 @@ export interface Role {
 export interface Player {
   name: string;
   id: number;
-  role: Role;
+  role?: string;
   alive?: boolean;
 }
 
-export interface Event{
+export interface Event {
   subject: string;
   target: string;
   actionType: string;
+}
+
+export interface Game {
+  name: string;
+  players: Player[];
 }
