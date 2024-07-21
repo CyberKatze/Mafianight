@@ -9,6 +9,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
   const token = localStorage.getItem('token');
 
+  // TODO: Add token verification
   if (!token) {
     // Redirect to login page if not authenticated
     return <Navigate to="/loginrequired" state={{ from: location }} />;

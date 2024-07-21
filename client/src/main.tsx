@@ -16,12 +16,6 @@ import Signup from './routes/Signup.tsx';
 import Voting from './routes/voting.tsx';
 import Game from './routes/game.tsx';
 
-const handleStart = (numberOfPlayers: number, playerNames: string[], roles: { [key: string]: number }) => {
-  console.log('Number of Players:', numberOfPlayers);
-  console.log('Player Names:', playerNames);
-  console.log('Roles:', roles);
-  
-};
 const router = createBrowserRouter([
   {
     path: '/',
@@ -37,15 +31,17 @@ const router = createBrowserRouter([
         path: 'login/',
         element: <Loginform />
       },
-      { path: 'signup/', element: <Signup />},
+      { path: 'signup/', element: <Signup /> },
       { path: 'roles/', element: <Roles /> },
       { path: 'rolecards/', element: <RoleCards /> },
       { path: 'voting/', element: <Voting /> },
-      { path: 'gamesetup/', element:  <ProtectedRoute>
-     <Gamesetup onStart={handleStart}/>
-    </ProtectedRoute>},
-      { path: 'loginrequired/', element:  <LoginRequired/> },
-      { path: 'game/', element: <Game /> }
+      {
+        path: 'gamesetup/', element: <ProtectedRoute>
+          <Gamesetup />
+        </ProtectedRoute>
+      },
+      { path: 'loginrequired/', element: <LoginRequired /> },
+      { path: 'game/:gameId', element: <Game /> }
     ],
   },
 ])

@@ -6,7 +6,6 @@ export interface Role {
 }
 export interface Player {
   name: string;
-  id: number;
   role?: string;
   alive?: boolean;
 }
@@ -18,6 +17,14 @@ export interface Event {
 }
 
 export interface Game {
+  id: string | undefined;
   name: string;
   players: Player[];
+}
+
+export interface PlayerWithRole {
+  id: string;
+  name: string;
+  role: Role;
+  alive?: boolean;
 }

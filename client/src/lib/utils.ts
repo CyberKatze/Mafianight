@@ -1,7 +1,7 @@
 import type { Player } from './types';
 import { produce } from "immer"
 
-export function distribute_roles(players: Player[], roles: { [key: string]: number }): Player[] {
+export function distributeRoles(players: Player[], roles: { [key: string]: number }): Player[] {
   const rolesToDistribute = Object.keys(roles).reduce<string[]>((acc, key) => {
     for (let i = 0; i < roles[key]; i++) {
       acc.push(key);

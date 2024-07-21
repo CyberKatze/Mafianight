@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { distributeRoles } from '../lib/utils.ts';
+import { createGame } from '../lib/rest.ts';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   onStart: (
@@ -9,12 +12,13 @@ interface Props {
 
 const roles = ["Doctor", "Detective", "Mafia", "Citizen", "Sniper", "Godfather"];
 
-const Gamesetup = ({ onStart }: Props) => {
+const Gamesetup = () => {
   const [step, setStep] = useState(1);
   const [numberOfPlayers, setNumberOfPlayers] = useState(0);
   const [playerNames, setPlayerNames] = useState<string[]>([]);
   const [roleCounts, setRoleCounts] = useState<{ [key: string]: number }>({});
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const handleNext = () => {
     if (step === 1) {
@@ -36,6 +40,19 @@ const Gamesetup = ({ onStart }: Props) => {
     }
   };
 
+  const onStart = async (numberOfPlayers: number, playerNames: string[], roles: { [key: string]: number }) => {
+
+    // ditribute roles
+    const playersWithRoles = distributeRoles(playerNames.map(name => ({ name: name, alive: true })), roles);
+
+    const game = await createGame("game", playersWithRoles);
+
+    console.log(game);
+    console.log('Number of Players:', numberOfPlayers);
+    console.log('Player Names:', playerNames);
+    console.log('Roles:', roles);
+    navigate(`/game/${game.id}`);
+  }
   const handlePrevious = () => {
     if (step > 1) {
       setStep(step - 1);

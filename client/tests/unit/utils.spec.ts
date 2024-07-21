@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { shuffle, distribute_roles } from '../../src/lib/utils';
+import { shuffle, distributeRoles } from '../../src/lib/utils';
 
 test('shuffle function', () => {
   const array = ['1', '2', '3', '4', '5'];
@@ -12,7 +12,7 @@ test('shuffle function', () => {
 test('distribution of roles', () => {
   const players = [{ name: 'Alice' }, { name: 'Bob' }, { name: 'Charlie' }];
   const roles = { 'villager': 2, 'werewolf': 1 };
-  const playersWithRoles = distribute_roles(players, roles);
+  const playersWithRoles = distributeRoles(players, roles);
   expect(playersWithRoles).toHaveLength(players.length);
 
   playersWithRoles.forEach(player => {
