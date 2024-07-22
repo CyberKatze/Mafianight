@@ -40,6 +40,7 @@ services:
       YESOD_PGDATABASE: ${YESOD_PGDATABASE}
       SECRET: ${SECRET}
       SALT: ${SALT}
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
     ports: 
       - "3000:3000"
 

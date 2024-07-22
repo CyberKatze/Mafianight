@@ -43,6 +43,7 @@ data AppSettings = AppSettings
     -- behind a reverse proxy.
     , appJWTSecret              :: Text
     , appSalt                   :: Text
+    , appGithubToken               :: Text
 
     , appDetailedRequestLogging :: Bool
     -- ^ Use detailed request logging system
@@ -81,6 +82,7 @@ instance FromJSON AppSettings where
         appIpFromHeader           <- o .: "ip-from-header"
         appJWTSecret              <- o .: "jwt-secret"
         appSalt                   <- o .: "salt"
+        appGithubToken            <- o .: "github-token"
 
         dev                       <- o .:? "development"      .!= defaultDev
 

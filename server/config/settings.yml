@@ -33,6 +33,7 @@ ip-from-header: "_env:YESOD_IP_FROM_HEADER:false"
 
 jwt-secret: "_env:JWT_SECRET:secret"
 salt: "_env:SALT:secretsalty"
+github-token: "_env:GITHUB_TOKEN:githubtoken"
 
 database:
   # See config/test-settings.yml for an override during tests

@@ -65,6 +65,7 @@ instance Yesod App where
     errorHandler (InternalError e) = toTypedContent <$> custom403 e
 
     isAuthorized RoleR _ = return Authorized
+    isAuthorized (GithubProfileR _) _ = return Authorized
     isAuthorized GameR _ = isUser
     isAuthorized UserR _ = isUser
     isAuthorized TurnR _ = isUser
@@ -126,6 +127,11 @@ hashPassword :: Text -> HandlerFor App Text
 hashPassword password = do
   salt <- encodeUtf8 . appSalt . appSettings <$> getYesod
   return $ decodeUtf8 $ makePasswordSalt (encodeUtf8 password) (makeSalt salt) 16
+
+getGithubToken :: HandlerFor App ByteString 
+getGithubToken = do
+  encodeUtf8 . appGithubToken . appSettings <$> getYesod
+  
 
 generateToken :: UserId -> Claims -> HandlerFor App Text
 generateToken userId claim = do

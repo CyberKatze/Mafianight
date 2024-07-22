@@ -20,3 +20,5 @@
 /me MeR GET
 
 /register RegisterR POST
+
+/github-profile/#Text GithubProfileR GET
