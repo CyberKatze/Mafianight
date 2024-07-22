@@ -1,4 +1,4 @@
-import type { Player } from './types';
+import type { Player, Role } from './types';
 import { produce } from "immer"
 
 export function distributeRoles(players: Player[], roles: { [key: string]: number }): Player[] {
@@ -25,3 +25,7 @@ export function shuffle(array: string[]): string[] {
   }
   return shuffled;
 }
+
+export function findRoleByName(roleName: string | undefined, roles: Role[]): Role | undefined {
+  return roles.find(role => role.name === roleName);
+  }

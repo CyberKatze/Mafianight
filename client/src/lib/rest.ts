@@ -1,19 +1,22 @@
-import type { Game, Player } from './types';
+import type { Game, PlayerWithRole, Role } from './types';
 import axios from 'axios'
 import { gameStore, gameAtom } from './store';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+export const apiUrl = import.meta.env.VITE_API_URL;
 
 export async function fetchGame(gameId: string): Promise<Game> {
   const response = await axios.get(apiUrl + `/games/${gameId}`);
   return response.data;
 }
+export async function fetchRoles(): Promise<Role[]> {
+  const response = await axios.get(apiUrl + '/roles');
+  return response.data;
+}
 
-export async function createGame(name: string, players: Player[]): Promise<Game> {
-  const effect = (game: Game): void => { game.name = name; game.players = players };
-  gameStore.set(gameAtom, effect);
+export async function createGame(name: string, players: PlayerWithRole[]): Promise<Game> {
   const token = localStorage.getItem('token');
-  const response = await axios.post(apiUrl + '/games', gameStore.get(gameAtom), { headers: { Authorization: `Bearer ${token}` } });
+  const response = await axios.post(apiUrl + '/games', { name: name, players: players }, { headers: { Authorization: `Bearer ${token}` } });
+  gameStore.set(gameAtom, response.data);
   return response.data;
 }
 

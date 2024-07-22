@@ -15,7 +15,7 @@ export interface Player {
 const Voting: React.FC = () => {
   const [players, setPlayers] = useState<PlayerWithRole[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchPlayers = async () => {
@@ -47,7 +47,7 @@ const Voting: React.FC = () => {
   };
 
   // TODO: we should create the data for posting, I left this part as it is and will modify after API has been provided
-  const handleSelectionChange = (isChecked: boolean, playerId: number, selectedId: number) => {
+  const handleSelectionChange = (isChecked: boolean, playerId: string, selectedId: string) => {
     const newSelectedIds = [...selectedIds];
     if (selectedId === null) {
       // just for using it

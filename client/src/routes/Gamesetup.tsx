@@ -1,30 +1,23 @@
 import { useState } from 'react';
-import { distributeRoles } from '../lib/utils.ts';
+import { distributeRoles, findRoleByName } from '../lib/utils.ts';
 import { createGame } from '../lib/rest.ts';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLoaderData } from 'react-router-dom';
+import { PlayerWithRole, Role } from "../lib/types";
 
-interface Props {
-  onStart: (
-    numberOfPlayers: number,
-    playerNames: string[],
-    roles: { [key: string]: number }) => void;
-}
 
-const roles = ["Doctor", "Detective", "Mafia", "Citizen", "Sniper", "Godfather"];
 
 const Gamesetup = () => {
   const [step, setStep] = useState(1);
-  const [numberOfPlayers, setNumberOfPlayers] = useState(0);
   const [playerNames, setPlayerNames] = useState<string[]>([]);
   const [roleCounts, setRoleCounts] = useState<{ [key: string]: number }>({});
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const roles: Role[] = useLoaderData() as Role[];
 
   const handleNext = () => {
     if (step === 1) {
       const totalRoles = Object.values(roleCounts).reduce((acc, count) => acc + count, 0);
       if (totalRoles > 0) {
-        setNumberOfPlayers(totalRoles);
         const defaultNames = Array.from({ length: totalRoles }, (_, i) => `Player ${i + 1}`);
         setPlayerNames(defaultNames);
         setStep(2);
@@ -33,25 +26,28 @@ const Gamesetup = () => {
         setError('Please assign at least one role.');
       }
     } else if (step === 2 && playerNames.every(name => name.trim() !== '')) {
-      onStart(numberOfPlayers, playerNames, roleCounts);
+      onStart(playerNames, roleCounts, roles);
       setError(null);
     } else {
       setError('Please complete all fields.');
     }
   };
 
-  const onStart = async (numberOfPlayers: number, playerNames: string[], roles: { [key: string]: number }) => {
+  const onStart = async (playerNames: string[], roles_count: { [key: string]: number }, roles: Role[]) => {
 
+    // TODO: make this better
     // ditribute roles
-    const playersWithRoles = distributeRoles(playerNames.map(name => ({ name: name, alive: true })), roles);
+    const defaultRole = roles[0];
 
-    const game = await createGame("game", playersWithRoles);
+    const playersWithRoles: PlayerWithRole[] =
+      distributeRoles(playerNames.map(name => ({ name: name, alive: true })), roles_count)
+        .map((player) => ({ name: player.name, alive: true, role: findRoleByName(player.role, roles) || defaultRole }))
 
-    console.log(game);
-    console.log('Number of Players:', numberOfPlayers);
-    console.log('Player Names:', playerNames);
-    console.log('Roles:', roles);
-    navigate(`/game/${game.id}`);
+    const gameS = await createGame("game", playersWithRoles);
+
+
+    console.log(gameS);
+    navigate('/rolecards')
   }
   const handlePrevious = () => {
     if (step > 1) {
@@ -66,13 +62,13 @@ const Gamesetup = () => {
     setPlayerNames(newPlayerNames);
   };
 
-  const handleRoleCountChange = (role: string, increment: boolean) => {
-    const currentCount = roleCounts[role] || 0;
+  const handleRoleCountChange = (roleName: string, increment: boolean) => {
+    const currentCount = roleCounts[roleName] || 0;
     const newCount = increment ? currentCount + 1 : currentCount - 1;
     if (newCount >= 0) {
       setRoleCounts({
         ...roleCounts,
-        [role]: newCount,
+        [roleName]: newCount,
       });
     }
   };
@@ -94,17 +90,17 @@ const Gamesetup = () => {
           {roles.map((role, index) => (
             <div key={index} className="mb-2 flex items-center">
               <label className="block text-sm font-medium text-white mb-1 w-1/3">
-                {role}
+                {role.name}
               </label>
               <button
-                onClick={() => handleRoleCountChange(role, false)}
+                onClick={() => handleRoleCountChange(role.name, false)}
                 className="px-2 py-1 bg-slate text-white rounded-md mr-2"
               >
                 -
               </button>
-              <span className="text-white w-1/3 text-center">{roleCounts[role] || 0}</span>
+              <span className="text-white w-1/3 text-center">{roleCounts[role.name] || 0}</span>
               <button
-                onClick={() => handleRoleCountChange(role, true)}
+                onClick={() => handleRoleCountChange(role.name, true)}
                 className="px-2 py-1 bg-slate text-white rounded-md ml-2"
               >
                 +

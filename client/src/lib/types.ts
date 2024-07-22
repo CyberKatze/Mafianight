@@ -11,19 +11,26 @@ export interface Player {
 }
 
 export interface Event {
+
   subject: string;
   target: string;
   actionType: string;
+  turn: Turn;
+}
+export interface Turn {
+  phase: string;
+  order: number;
 }
 
 export interface Game {
   id: string | undefined;
   name: string;
-  players: Player[];
+  players: PlayerWithRole[];
+  currentTurn?: Turn | undefined;
 }
 
 export interface PlayerWithRole {
-  id: string;
+  id?: string;
   name: string;
   role: Role;
   alive?: boolean;

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { fetchRoles } from '../lib/rest';
 
 interface Role {
   name: string;
@@ -14,16 +14,16 @@ const Roles: React.FC = () => {
   console.log('apiUrl:', apiUrl);
 
   useEffect(() => {
-    const fetchRoles = async () => {
+    const getRoles = async () => {
       try {
-        const response = await axios.get(apiUrl + '/roles');
-        setRoles(response.data);
+        const roles = await fetchRoles();
+        setRoles(roles);
       } catch (error) {
         console.error('Error fetching roles:', error);
       }
     };
 
-    fetchRoles();
+    getRoles();
   }, []);
 
   return (
@@ -31,7 +31,7 @@ const Roles: React.FC = () => {
       {roles.map((role) => (
         <div
           key={role.name}
-          className="max-w-sm rounded overflow-hidden shadow-lg m-4 transform transition duration-500 hover:scale-105 hover:shadow-2xl"
+          className="max-w-sm  bg-stormy rounded overflow-hidden shadow-lg m-4 transform transition duration-500 hover:scale-105 hover:shadow-2xl"
         >
           <img className="w-full" src={role.avatar} alt={role.name} />
           <div className="px-6 py-4">

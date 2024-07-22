@@ -1,8 +1,9 @@
 import { atomWithImmer } from 'jotai-immer';
+import { atom } from 'jotai';
 import { createStore } from 'jotai';
 import type { Game, Role } from './types';
 
-const gameAtom = atomWithImmer<Game>({ name: '', players: [] });
+const gameAtom = atom<Game>({ id: undefined, name: '', players: [] });
 const gameStore = createStore();
 
 gameStore.set(gameAtom, x => x)

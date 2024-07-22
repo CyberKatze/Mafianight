@@ -15,6 +15,9 @@ import Root from "./routes/root";
 import Signup from './routes/Signup.tsx';
 import Voting from './routes/voting.tsx';
 import Game from './routes/game.tsx';
+import { gameStore } from "./lib/store";
+import { Provider } from "jotai";
+import { apiUrl } from "./lib/rest.ts"
 
 const router = createBrowserRouter([
   {
@@ -36,9 +39,15 @@ const router = createBrowserRouter([
       { path: 'rolecards/', element: <RoleCards /> },
       { path: 'voting/', element: <Voting /> },
       {
-        path: 'gamesetup/', element: <ProtectedRoute>
+        path: 'gamesetup/',
+        element: <ProtectedRoute>
           <Gamesetup />
-        </ProtectedRoute>
+        </ProtectedRoute>,
+
+        loader: async ({ request }) => {
+
+          return fetch(apiUrl + '/roles', { signal: request.signal })
+        }
       },
       { path: 'loginrequired/', element: <LoginRequired /> },
       { path: 'game/:gameId', element: <Game /> }
@@ -47,6 +56,9 @@ const router = createBrowserRouter([
 ])
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <Provider store={gameStore}>
+      <RouterProvider router={router} />
+
+    </Provider>
   </React.StrictMode>,
 )

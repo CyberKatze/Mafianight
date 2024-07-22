@@ -13,7 +13,7 @@ const Day: React.FC<DayProps> = ({ handlePhaseChange }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-midnight space-y-4 flex flex-col p-4 items-center max-w-2xl mx-auto">
+    <div className=" border-slate-200 border-2 space-y-4 max-h-90 flex flex-col p-4 items-center max-w-2xl mx-auto">
       <div className="flex flex-row justify-between w-full ">
         <div
           className="bg-peach flex justify-evenly font-bold w-1/6 py-2 text-2xl rounded-xl"
@@ -37,12 +37,12 @@ const Day: React.FC<DayProps> = ({ handlePhaseChange }) => {
           {players
             .filter((player) => player.alive)
             .map((player) => (
-              <div className="flex flex-row items-center space-x-2">
-                <PlayerCard key={player.id} player={player} />
+              <div key={player.name} className="flex flex-row items-center space-x-2">
+                <PlayerCard player={player} />
               </div>
             ))}
         </div>
-        <div className="flex flex-col space-y-2">
+        <div className="flex-col space-y-2 hidden sm:flex">
           <h5 className="text-xl text-lavender text-right">Deads</h5>
           {players
             .filter((player) => !player.alive)
