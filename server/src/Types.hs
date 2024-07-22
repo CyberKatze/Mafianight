@@ -15,7 +15,7 @@ module Types (
   , UserRegister(..)
   , GameRegister(..)
   , GameInfo(..)
-  , PlayerInfo(..))
+  , PlayerInfo(..), RoleInfo(..))
 where
 import ClassyPrelude.Yesod 
 import Data.Aeson.TH
@@ -86,10 +86,22 @@ instance FromJSON UserRegister where
 instance ToJSON UserRegister  where
   toJSON = genericToJSON  $ customOptions "userRegister"
 
+data RoleInfo = RoleInfo
+  { roleInfoName :: Text, 
+    roleInfoDesc :: Maybe Text,
+    roleInfoId :: Maybe Int64,
+    roleInfoAvatar :: Maybe Text
+  } deriving (Show, Generic)
+
+instance FromJSON RoleInfo where
+  parseJSON = genericParseJSON $ customOptions "roleInfo"
+
+instance ToJSON RoleInfo  where
+  toJSON = genericToJSON  $ customOptions "roleInfo"
 data PlayerInfo = PlayerInfo
   { playerInfoName :: Text
   , playerInfoAlive :: Bool
-  , playerInfoRole :: Text  
+  , playerInfoRole :: Maybe RoleInfo  
   } deriving (Show, Generic)
 
 instance FromJSON PlayerInfo where

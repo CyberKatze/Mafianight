@@ -97,16 +97,17 @@ spec = withApp $ do
     it "asserts get game by id" $ do
       -- create a user
       user <- createUser "email.com" "user" "123" False
-      game <- createGame "sampleGame" (entityKey user)
+      _game <- createGame "sampleGame" (entityKey user)
 
       mtoken <- login "email.com" "123"
 
       -- register a game with players
       let name = "game" :: Text
-          playersObj =  [ object [ "name" .= ("player1" :: Text) , "alive" .= True, "role" .= ("mafia" :: Text) ]
-                , object [ "name" .= ("player2" :: Text), "alive" .= True, "role" .= ("villager" :: Text) ]
+          playersObj =  [ object [ "name" .= ("player1" :: Text) , "alive" .= True, "role" .= object["name" .= ("mafia" :: Text), "id" .= (1::Int64)] ]
+                , object [ "name" .= ("player2" :: Text), "alive" .= True, "role" .= object["name" .= ("villager" :: Text), "id" .= (1::Int64)] ]
                 ]
           gameObj = object [ "name" .= name, "players" .= playersObj ]
+          
           encoded = encode gameObj
 
       case mtoken of
