@@ -29,7 +29,6 @@
           pgcli
           playwright-test
           gnumake
-          lsof
         ];
 
         stack-wrapped = pkgs.symlinkJoin {
@@ -85,10 +84,15 @@
             name = "image-root";
             paths = [
              backend
+             pkgs.curl
+             pkgs.bashInteractive
             ] ; 
             pathsToLink = [ "/bin" ];
             };
             config = { 
+              Env = [
+                "SSL_CERT_FILE=${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt" 
+              ];
               WorkingDir = "/app";
               CMD = [ "haskell-web" ];
             };
