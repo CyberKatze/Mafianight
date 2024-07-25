@@ -79,6 +79,10 @@
             runAsRoot = ''
               mkdir -p /app/seeds
               cp  ${./server/seeds/roles.json} /app/seeds/roles.json
+
+               # Create the symlink for CA certificates  
+              mkdir -p /etc/ssl/certs  
+              ln -s ${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt /etc/ssl/certs/ca-bundle.crt
               '';
             copyToRoot = pkgs.buildEnv {
             name = "image-root";

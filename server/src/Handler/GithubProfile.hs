@@ -37,6 +37,8 @@ getGithubProfileR username = do
     let statusCodeReq = getResponseStatusCode response  
     let responseBodyReq = getResponseBody response  
 
+    -- Log the response for diagnostic purposes  
+    liftIO $ L8.putStrLn  responseBodyReq
 
     case statusCodeReq of  
         200 -> case decode responseBodyReq:: Maybe GitHubProfile of  
