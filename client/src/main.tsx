@@ -19,6 +19,7 @@ import { gameStore } from "./lib/store";
 import { Provider } from "jotai";
 import { apiUrl } from "./lib/rest.ts"
 
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -28,7 +29,7 @@ const router = createBrowserRouter([
       { path: '/', element: <Home /> },
       {
         path: 'about/',
-        element: <About />
+        element: <About/>
       },
       {
         path: 'login/',

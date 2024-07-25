@@ -10,7 +10,7 @@ const Root: React.FC = () => {
       <div className="min-h-screen flex flex-col">
         <Navbar />
 
-        <div className="flex flex-1 bg-darkgray">
+        <div className="flex flex-1 text-text-default bg-base-default">
           <div id="detail" className="flex-grow">
             {/* Detail content goes here */}
             <Outlet />

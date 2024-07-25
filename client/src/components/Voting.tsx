@@ -31,29 +31,28 @@ const VotingComponent = ({ player, players, onSelectionChange }: VotingComponent
       {player ? (
         <div
           key={player.name}
-          className="max-w-sm rounded bg-stormy border overflow-hidden shadow-lg m-4"
+          className="relative max-w-sm rounded bg-gradient-to-t from-blue to-lavender overflow-hidden shadow-lg m-4"
         >
+          <div className={` ${player.role.mafia ? 'bg-red' : 'bg-green'} absolute w-[9ch] text-center top-3 pt-14 pb-2 left-3 angle-label text-text-inverted px-2 py-1 font-semibold rounded`}>  
+              {player.role?.mafia ? 'Mafia' : 'Citizen'}
+    </div> 
           <img className="w-full " src={player.role.avatar} alt={player.name} />
           <div className="px-6 py-4">
-            <p className="text-white text-2xl">{player.name}
-              <span className={`mt-2 text-base font-semibold float-right ${player.role.mafia ? 'text-red' : 'text-green-500'
-                }`}>
-                {player.role.mafia ? ' Mafia' : ' Not Mafia'}
-              </span>
+            <p className="text-text-inverted text-2xl text-semibold">{player.name}
             </p>
-            <div className='bg-black mt-4 p-4 rounded max-h-40 overflow-y-auto'>
+            <div className='bg-base-default mt-4 p-4 rounded scrollbar-thumb-sky scrollbar-thumb-rounded  max-h-40 overflow-y-auto'>
               <ul className='list-none space-y-2'>
                 {players.map((data, index) => (
                   player.id != data.id &&
                   (<li key={`${data.name}-${index}`} className='className="mt-2 cursor-pointe"'>
                     <input
                       type="checkbox"
-                      className="form-checkbox h-5 w-5 text-gray-600"
+                      className="form-checkbox h-5 w-5 text-text-default"
                       readOnly
                       checked={checkedItems.includes(`${player.name}-${data.name}`)}
                       onChange={(e) => handleCheckboxChange(e, player.name, data.name)}
                     />
-                    <span className="text-gray-700 ml-2">{data.name}</span>
+                    <span className="text-text-default ml-2">{data.name}</span>
                   </li>)
                 ))}
               </ul>

@@ -31,18 +31,16 @@ const Roles: React.FC = () => {
       {roles.map((role) => (
         <div
           key={role.name}
-          className="max-w-sm  bg-stormy rounded overflow-hidden shadow-lg m-4 transform transition duration-500 hover:scale-105 hover:shadow-2xl"
+          className="relative max-w-sm  bg-gradient-to-t from-blue to-lavender rounded overflow-hidden  shadow-lg m-4 transform transition duration-500 hover:scale-105 hover:shadow-2xl"
         >
+              <div className={` ${role.mafia ? 'bg-red' : 'bg-green'} absolute w-[9ch] text-center top-3 pt-14 pb-2 left-3 angle-label text-text-inverted px-2 py-1 font-semibold rounded`}>  
+
+              {role.mafia ? 'Mafia' : 'Citizen'}
+    </div> 
           <img className="w-full" src={role.avatar} alt={role.name} />
           <div className="px-6 py-4">
-            <div className="font-bold text-xl mb-2">{role.name}</div>
-            <p className="text-gray-700 text-base">{role.desc}</p>
-            <p
-              className={`mt-2 font-semibold ${role.mafia ? 'text-red-500' : 'text-green-500'
-                }`}
-            >
-              {role.mafia ? 'Mafia' : 'Not Mafia'}
-            </p>
+            <div className=" text-text-inverted font-bold text-xl mb-2">{role.name}</div>
+            <p className="text-text-inverted">{role.desc}</p>
           </div>
         </div>
       ))}

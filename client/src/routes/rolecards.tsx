@@ -93,21 +93,21 @@ const RoleCards: React.FC = () => {
       <div className="flex flex-wrap justify-center">
         {currentIndex > 0 &&
           <button type="button"
-            className=" bg-red text-white hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            className="text-text-inverted bg-gradient-to-l from-red to-maroon hover:from-rosewater hover:to-rosewater font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2  focus:outline-none "
             onClick={handlePrevious}>
             Previous
           </button>
         }
         {currentIndex < mockRoleCards.length - 1 &&
           <button type="button"
-            className=" bg-violet text-white hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            className=" bg-gradient-to-l from-teal to-green hover:from-rosewater hover:to-rosewater text-text-inverted font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none"
             onClick={handleNext}>
             Next
           </button>
         }
         {currentIndex == mockRoleCards.length - 1 &&
           <button type="button"
-            className=" bg-violet text-white hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800"
+            className=" bg-gradient-to-l from-teal to-green hover:from-rosewater hover:to-rosewater text-text-inverted font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 focus:outline-none "
             onClick={handleStart}>
             Start Game
           </button>

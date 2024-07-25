@@ -19,21 +19,20 @@ const Navbar = () => {
 
   const getLinkClass = (path: string) => {
     return location.pathname === path
-      ? 'block py-2 pr-4 pl-3 text-white bg-gray-700 rounded lg:bg-transparent lg:text-white lg:p-0 dark:text-white'
-      : 'block py-2 pr-4 pl-3 text-gray-400 border-b border-gray-700 hover:bg-gray-700 lg:hover:bg-transparent lg:border-0 lg:hover:text-white lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent';
+      ? 'block py-2 pr-4 pl-3 border-0 text-rosewater lg:border-b bg-crust lg:bg-transparent lg:text-rosewater lg:p-0'
+      : 'block py-2 pr-4 pl-3 border-0 text-subtext-muted lg:hover:bg-transparent lg:border-b lg:border-transparent lg:hover:text-rosewater lg:p-0 ';
   };
 
   const items = [
     { path: '/', text: 'Home' },
     { path: '/about', text: 'About' },
     { path: '/roles', text: 'Roles' },
-    { path: '/features', text: 'Features' },
   ];
 
 
   return (
     <header>
-      <nav className="border-gray-200 px-4 lg:px-6 py-2.5 bg-darkgray">
+      <nav className="bg-gradient-to-b from-mantle to-crust border-gray-200 px-4 lg:px-6 py-2.5">
         <div className="flex flex-wrap justify-between items-center mx-auto  relative lg:static">
           <Link to="/" className="flex items-center gap-1">
             <img src={hat} alt="logo" />
@@ -41,11 +40,11 @@ const Navbar = () => {
           </Link>
           <div className="flex items-center lg:order-2">
             {token ? (
-              <button onClick={handleLogout} className="bg-violet text-white hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">
+              <button onClick={handleLogout} className="bg-gradient-to-r from-mauve to-pink  text-text-inverted hover:from-rosewater hover:to-rosewater focus:outline-nonefont-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2">
                 Log out
               </button>
             ) : (
-              <Link to="/login" className="bg-violet text-white hover:bg-gray-700 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 dark:hover:bg-gray-700 focus:outline-none dark:focus:ring-gray-800">
+              <Link to="/login" className="bg-gradient-to-r from-mauve to-pink  text-text-inverted hover:from-rosewater hover:to-rosewater focus:outline-none font-medium rounded-lg text-sm px-4 lg:px-5 py-2 lg:py-2.5 mr-2 ">
                 Log in
               </Link>
             )}
@@ -66,8 +65,8 @@ const Navbar = () => {
               </svg>
             </button>
           </div>
-          <div className={`justify-between z-50 items-center w-full lg:flex lg:w-auto absolute top-full lg:static bg-slate lg:bg-transparent lg:order-1 ${isMenuOpen ? 'block' : 'hidden'}`} id="mobile-menu-2">
-            <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+          <div className={`justify-center z-50 items-center w-full lg:flex lg:w-auto absolute top-full lg:static lg:bg-transparent bg-mantle lg:order-1 ${isMenuOpen ? 'block' : 'hidden'}`} id="mobile-menu-2">
+            <ul className="flex flex-col font-medium lg:flex-row  lg:space-x-8 lg:mt-0">
               {items.map((item) => (
                 <li key={item.path}>
                   <Link to={item.path} className={getLinkClass(item.path)}>{item.text}</Link>

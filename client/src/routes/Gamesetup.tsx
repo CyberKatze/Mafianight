@@ -76,32 +76,32 @@ const Gamesetup = () => {
   const totalRoles = Object.values(roleCounts).reduce((acc, count) => acc + count, 0);
 
   return (
-    <div className="max-w-sm mx-auto bg-onyx border-onyx p-8 rounded-xl shadow-md">
+    <div className="max-w-sm mx-auto mt-4 bg-gradient-to-b from-mantle to-crust border-onyx p-8 rounded-xl shadow-md">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl text-white font-semibold">Game Setup</h2>
-        <div className="text-lavender ml-4 ">
+        <h2 className="text-xl text-text-default font-semibold">Game Setup</h2>
+        <div className="text-teal ml-4 ">
           Players: {totalRoles}
         </div>
       </div>
       {error && <div className="text-red mb-4">{error}</div>}
       {step === 1 && (
         <>
-          <h3 className="text-lg text-white font-semibold mb-2">Select Roles:</h3>
+          <h3 className="text-lg text-text-default font-semibold mb-2">Select Roles:</h3>
           {roles.map((role, index) => (
             <div key={index} className="mb-2 flex items-center">
-              <label className="block text-sm font-medium text-white mb-1 w-1/3">
+              <label className="block text-sm font-medium text-text-default mb-1 w-1/3">
                 {role.name}
               </label>
               <button
                 onClick={() => handleRoleCountChange(role.name, false)}
-                className="px-2 py-1 bg-slate text-white rounded-md mr-2"
+                className="px-2 py-1 bg-surface-dark text-text-default rounded-md mr-2"
               >
                 -
               </button>
-              <span className="text-white w-1/3 text-center">{roleCounts[role.name] || 0}</span>
+              <span className="text-text-default w-1/3 text-center">{roleCounts[role.name] || 0}</span>
               <button
                 onClick={() => handleRoleCountChange(role.name, true)}
-                className="px-2 py-1 bg-slate text-white rounded-md ml-2"
+                className="px-2 py-1 bg-surface-dark text-text-default rounded-md ml-2"
               >
                 +
               </button>
@@ -113,14 +113,14 @@ const Gamesetup = () => {
         <>
           {playerNames.map((name, index) => (
             <div key={index} className="mb-2">
-              <label className="block text-sm font-medium text-white mb-1">
+              <label className="block text-sm font-medium text-text-default mb-1">
                 Player {index + 1} Name
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => handlePlayerNameChange(index, e.target.value)}
-                className="w-full px-3 py-2 border bg-slate border-slate text-gray-400 rounded-md"
+                className="w-full px-3 py-2 border bg-surface-dark border-slate text-gray-400 rounded-md"
               />
             </div>
           ))}
@@ -130,14 +130,14 @@ const Gamesetup = () => {
         {step > 1 && (
           <button
             onClick={handlePrevious}
-            className="w-full bg-gray-500 hover:bg-gray-700 text-white py-2 rounded-md mr-2"
+            className="w-full bg-gradient-to-l from-red to-maroon hover:from-rosewater hover:to-rosewater  text-text-inverted py-2 rounded-md mr-2"
           >
             Previous
           </button>
         )}
         <button
           onClick={handleNext}
-          className="w-full bg-violet hover:bg-lavender text-white py-2 rounded-md"
+          className="w-full bg-gradient-to-l from-teal to-green hover:from-rosewater hover:to-rosewater text-text-inverted py-2 rounded-md"
         >
           {step === 1 ? 'Next' : 'Start Game'}
         </button>

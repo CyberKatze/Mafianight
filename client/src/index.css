@@ -17,5 +17,10 @@
   background: linear-gradient(to bottom, hsl(var(--main-hue), 24%, 12%), hsl(var(--main-hue), 24%, 30%));
 }
 
+.angle-label {  
+  transform-origin: 0 0;  
+  transform: rotate(-45deg) translate(-50%, -50%) ;
+}
+
 
 

@@ -13,17 +13,17 @@ const Day: React.FC<DayProps> = ({ handlePhaseChange }) => {
   const navigate = useNavigate();
 
   return (
-    <div className=" border-slate-200 border-2 space-y-4 max-h-90 flex flex-col p-4 items-center max-w-2xl mx-auto">
+    <div className=" mt-4 bg-gradient-to-b from-mantle to-crust rounded space-y-4 max-h-90 flex flex-col p-4 items-center max-w-2xl mx-auto">
       <div className="flex flex-row justify-between w-full ">
-        <div
-          className="bg-peach flex justify-evenly font-bold w-1/6 py-2 text-2xl rounded-xl"
+        <button
+          className="bg-peach hover:bg-yellow text-text-inverted flex justify-evenly items-center font-bold w-1/6 py-2 text-2xl rounded-xl"
           onClick={() => setNumber(number + 1)}
         >
           <img src={sun} className="w-8 h-8" />
-          <div className="text-2xl">{number}</div>
-        </div>
+          <div className="text-xl">{number}</div>
+        </button>
         <button
-          className="bg-stormy flex justify-evenly space-x-1 p-1 items-center font-bold py-2 text-2xl rounded-xl"
+          className="bg-stormy text-text-inverted items-center hover:bg-lavender flex justify-center space-x-1 p-1 items-end font-bold py-2 text-2xl rounded-xl"
           onClick={handlePhaseChange}
         >
           <img src={moon} className=" w-8 h-8" />
@@ -51,7 +51,7 @@ const Day: React.FC<DayProps> = ({ handlePhaseChange }) => {
             ))}
         </div>
       </div>
-      <button onClick={() => navigate('/voting')} className="bg-lemon flex justify-evenly bg-lavendor space-x-1 px-6 p-3 items-center font-bold text-2xl rounded-xl">
+      <button onClick={() => navigate('/voting')} className="text-text-inverted bg-gradient-to-l from-teal to-green hover:to-rosewater hover:from-rosewater flex justify-evenly  space-x-1 px-6 p-3 items-center font-bold text-xl rounded-xl">
         Voting
       </button>
     </div>

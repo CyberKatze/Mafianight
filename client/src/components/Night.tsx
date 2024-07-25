@@ -14,17 +14,17 @@ interface NightProps {
 const Night: React.FC<NightProps> = ({ handlePhaseChange }) => {
   const [number, setNumber] = useState(1);
   return (
-    <div className="border-2 border-stormy space-y-4 flex flex-col p-4 items-center max-w-2xl mx-auto">
+    <div className=" mt-4 bg-gradient-to-b from-mantle to-crust rounded space-y-4 max-h-90 flex flex-col p-4 items-center max-w-2xl mx-auto">
       <div className="flex flex-row justify-between w-full ">
-        <div
-          className="bg-stormy flex justify-evenly font-bold w-1/6 py-2 text-2xl rounded-xl"
+        <button
+          className="bg-stormy hover:bg-lavender flex justify-evenly font-bold w-1/6 py-2 text-2xl rounded-xl"
           onClick={() => setNumber(number + 1)}
         >
           <img src={moon} className=" w-8 h-8" />
           <div className="text-2xl">{number}</div>
-        </div>
+        </button>
         <button
-          className="bg-peach flex justify-evenly space-x-1 p-1 items-center font-bold py-2 text-2xl rounded-xl"
+          className="bg-peach hover:bg-yellow flex justify-evenly space-x-1 p-1 items-center font-bold py-2 text-2xl rounded-xl"
           onClick={handlePhaseChange}
         >
           <img src={sun} className=" w-8 h-8" />
